@@ -51,4 +51,8 @@ launchctl bootout gui/$UID/com.santu.football-data-refresh        # 卸载
 launchctl bootstrap gui/$UID ~/Library/LaunchAgents/com.santu.football-data-refresh.plist  # 重新加载
 ```
 
-> 注意：Mac 合盖休眠时 launchd 不会补跑错过的任务，醒来后要手动 kickstart 一次。
+> 注意：单独的 `refresh` 任务在 Mac 合盖休眠到 09:03 时**不会**补跑；但本机另有一支 `com.santu.football-data-catchup` 任务（每 5 分钟 + 开机即跑，随系统唤醒恢复），会在唤醒后自动检测错过的周一/周四窗口并补跑 `refresh.sh`，**无需手动 kickstart**。
+
+```bash
+launchctl list | grep football-data   # 应同时看到 refresh 与 catchup 两个任务
+```
