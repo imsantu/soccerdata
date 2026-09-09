@@ -5,7 +5,7 @@
 ## 手动跑一次
 
 ```bash
-/bin/bash /Users/santu/Desktop/soccerdata/football-data-site/tools/refresh.sh
+/bin/bash /Users/santu/Documents/soccerdata/football-data-site/tools/refresh.sh
 ```
 
 日志落在 `tools/logs/YYYY-MM-DD_HHMMSS.log`，每次同步前的旧数据文件备份在 `tools/backups/<时间戳>/`。

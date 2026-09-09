@@ -10,7 +10,7 @@ set -uo pipefail
 
 WS="/Users/santu/WorkBuddy AI/2026-09-02-02-18-19"
 GOALS_WS="/Users/santu/WorkBuddy AI/2026-08-24-11-07-48"
-SITE="/Users/santu/Desktop/soccerdata/football-data-site"
+SITE="/Users/santu/Documents/soccerdata/football-data-site"
 AUTO="$SITE/tools"
 PY="/usr/bin/python3"
 
