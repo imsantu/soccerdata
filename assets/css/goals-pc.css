@@ -1,0 +1,174 @@
+:root{
+  --bg:#0f1117; --card:#1a1d29; --card2:#252836; --border:#2a2d3a;
+  --text:#e0e0e0; --text2:#cccccc; --text-dim:#aaaaaa; --text-strong:#ffffff; --text-muted:#8a90a0; --muted:#555555;
+  --accent:#4a9eff; --green:#00b894; --row-green-bg:#1f3a2e; --axis:#262a38; --chart-bg:#151823;
+  --bar-grad:linear-gradient(90deg,#4a9eff,#00b894); --rk:#f1c40f; --note-flag:#e17055; --col-sel-bg:rgba(74,158,255,.12);
+  /* 一级 Tab（联赛导航）：选中态高饱和亮色 + 渐变下划线，与五大联赛平局报告保持一致 */
+  --tab-grad:linear-gradient(90deg,#00e6ff,#3d8bff 52%,#b96bff);
+  --tab-on:#28dcff; --tab-on-bg:rgba(40,200,255,.18); --tab-glow:0 0 18px rgba(40,200,255,.65);
+}
+[data-theme="light"]{
+  --bg:#eef1f6; --card:#ffffff; --card2:#eef1f6; --border:#d8dee9;
+  --text:#1f2430; --text2:#3a4252; --text-dim:#55607a; --text-strong:#10141c; --text-muted:#8a93a6; --muted:#9aa3b2;
+  --accent:#2f7bdc; --green:#0a9b73; --row-green-bg:#e3f6ef; --axis:#e2e8f0; --chart-bg:#ffffff;
+  --bar-grad:linear-gradient(90deg,#2f7bdc,#0a9b73); --rk:#c79a00; --note-flag:#d65a3a; --col-sel-bg:rgba(47,123,220,.10);
+  --tab-grad:linear-gradient(90deg,#1aa3ff,#2f7bdc 52%,#8a3fe4);
+  --tab-on:#0077e6; --tab-on-bg:rgba(0,119,230,.14); --tab-glow:0 0 14px rgba(26,140,255,.45);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:20px; transition:background .2s,color .2s; }
+.container { max-width:1180px; margin:0 auto; }
+.site-head { display:flex; align-items:center; gap:12px; max-width:1180px; margin:0 auto; padding:2px 2px 12px; }
+.brand { display:flex; align-items:center; gap:10px; min-width:0; }
+.brand .mark { width:38px; height:38px; flex:0 0 auto; border-radius:11px; display:block; box-shadow:0 4px 12px rgba(74,158,255,.28); }
+.brand-txt { display:flex; flex-direction:column; min-width:0; }
+.brand-txt .nm { font-size:22px; font-weight:800; letter-spacing:2px; color:var(--text-strong); line-height:1.15; }
+.brand-txt .sl { font-size:10.5px; letter-spacing:.6px; color:var(--text-muted); white-space:nowrap; }
+.crumb { margin-left:auto; display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:flex-end; font-size:12px; color:var(--text-muted); }
+.crumb b { color:var(--text-strong); font-weight:700; }
+.header { display:none; }
+.header .src { margin-top:6px; font-size:11px; color:var(--muted); }
+.footer a { color:var(--text-dim); text-decoration:underline; text-underline-offset:2px; text-decoration-color:var(--border); }
+.footer a:hover { color:var(--accent); text-decoration-color:var(--accent); }
+.theme-btn { position:fixed; top:14px; right:14px; z-index:50; padding:8px 14px; border-radius:20px; background:var(--card); border:1px solid var(--border); color:var(--text); cursor:pointer; font-size:13px; font-weight:600; transition:all .15s; }
+.theme-btn:hover { border-color:var(--accent); }
+.scroll-nav { position:fixed; right:30px; bottom:18px; z-index:70; display:flex; flex-direction:column; gap:10px; }
+.scroll-btn { width:46px; height:46px; border-radius:13px; background:var(--card); border:1px solid var(--border); color:var(--text-strong); cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.22); display:flex; align-items:center; justify-content:center; transition:background .18s, color .18s, border-color .18s, transform .18s, box-shadow .18s, opacity .2s; }
+.scroll-btn svg { width:20px; height:20px; display:block; }
+.scroll-btn:hover { background:var(--accent); color:#fff; border-color:var(--accent); transform:translateY(-2px); box-shadow:0 9px 22px rgba(74,158,255,.42); }
+.scroll-btn.hide { opacity:0; pointer-events:none; transform:translateY(10px); }
+/* 吸顶导航条：一级联赛 Tab + 二级赛季 Tab（与五大联赛平局报告一致） */
+.stickynav { position:sticky; top:0; z-index:45; background:var(--bg); padding:0 0 6px; margin-bottom:6px; box-shadow:0 1px 0 var(--border); }
+.league-tabs { display:flex; flex-wrap:nowrap; gap:2px; justify-content:center; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; }
+.league-tabs::-webkit-scrollbar { display:none; }
+.navrow { display:flex; align-items:flex-start; gap:10px; }
+.league-tab { position:relative; display:inline-flex; align-items:center; gap:9px; padding:15px 22px 13px; background:transparent; border:0; border-radius:11px; color:var(--text2); cursor:pointer; font-size:18px; font-weight:800; letter-spacing:.3px; transition:color .15s,background .15s; user-select:none; white-space:nowrap; min-width:0; flex:0 0 auto; }
+.league-tab::after { content:''; position:absolute; left:12px; right:12px; bottom:2px; height:3px; border-radius:3px; background:var(--tab-grad); transform:scaleX(0); transform-origin:center; transition:transform .18s ease; }
+.league-tab:hover { color:var(--text-strong); background:var(--card2); }
+.league-tab:hover::after { transform:scaleX(.45); }
+.league-tab.active { color:var(--tab-on); background:var(--tab-on-bg); font-weight:800; }
+.league-tab.active::after { transform:scaleX(1); box-shadow:var(--tab-glow); }
+.league-tab img { width:26px; height:26px; object-fit:contain; border-radius:6px; background:transparent; flex:0 0 auto; }
+.league-tab .lg-fallback { width:24px; height:24px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; color:#fff; font-weight:700; flex:0 0 auto; }
+.league-tab .uefa-logo { width:24px; height:14px; border-radius:3px; display:block; flex:0 0 auto; }
+.league-tab .rt { font-size:12px; font-weight:600; opacity:.62; margin-left:2px; }
+.league-tab.active .rt { opacity:.95; }
+.league-tab.big5 { font-weight:800; }
+/* ---- 合并走势对比图 ---- */
+.metric-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 12px;}
+.metric-bar .mbtn{padding:7px 16px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:13.5px;font-weight:700;border-radius:20px;cursor:pointer;transition:all .15s;}
+.metric-bar .mbtn:hover{color:var(--text-strong);border-color:var(--accent);}
+.metric-bar .mbtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.trend-leagues,.trend-buckets,.trend-metrics{gap:6px;margin:8px 0;}
+.trend-leagues .mbtn,.trend-buckets .mbtn,.trend-metrics .mbtn{min-width:76px;}
+.comb-svg .cb{cursor:pointer;transition:opacity .15s;}
+.comb-svg .cb:hover{opacity:.75;}
+.comb-svg{display:block;margin:0 auto;}
+.comb-svg .cb{transition:opacity .12s;cursor:pointer;}
+.comb-svg .cb:hover{opacity:.82;}
+.comb-legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:12px;}
+.comb-legend .lg-item{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);font-weight:600;}
+.comb-legend .lg-item .sw{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.trend-tip{position:fixed;z-index:80;pointer-events:none;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:12.5px;color:var(--text);box-shadow:0 6px 18px rgba(0,0,0,.20);display:none;max-width:240px;line-height:1.5;}
+/* ---- 2/3 球走势筛选 ---- */
+.seq-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 12px;}
+.seq-filter .seq-search{padding:7px 12px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);font-size:13px;min-width:190px;outline:none;}
+.seq-filter .seq-search:focus{border-color:var(--accent);}
+.seq-filter .seq-tg{padding:6px 14px;border:1px solid var(--border);border-radius:18px;background:var(--card);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s;opacity:.55;}
+.seq-filter .seq-tg.on{opacity:1;border-color:var(--accent);color:var(--text-strong);background:var(--card2);}
+.seq-filter .seq-tg[data-b="2"].on{box-shadow:inset 0 -3px 0 var(--green);}
+.seq-filter .seq-tg[data-b="3"].on{box-shadow:inset 0 -3px 0 #ff8c42;}
+.seq-filter .seq-count{font-size:12.5px;color:var(--text-muted);margin-left:auto;}
+.seq-teams{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+.seq-chip{padding:4px 11px;border:1px solid var(--border);border-radius:14px;background:var(--card);color:var(--text-muted);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;opacity:.5;}
+.seq-chip.on{opacity:1;color:var(--text-strong);border-color:var(--accent);background:var(--card2);}
+/* ---- 合并球队表（分布 + 2/3 指标）---- */
+.team-table .col-2{background:rgba(0,184,148,.10);}
+.team-table .col-3{background:rgba(255,140,66,.12);}
+.team-table .b2-h{color:var(--green);}
+.team-table .b3-h{color:#ff8c42;}
+.expand-toggle{padding:4px 12px;border:1px solid var(--border);background:var(--accent);color:#fff;font-size:12.5px;border-radius:8px;cursor:pointer;vertical-align:middle;}
+.team-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.season-tabs { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding:8px 0 2px; flex:1 1 auto; min-width:0; }
+.season-tab { padding:5px 13px; border-radius:999px; background:transparent; border:1px solid var(--border); color:var(--text-muted); cursor:pointer; font-size:12.5px; font-weight:600; transition:all .15s; user-select:none; white-space:nowrap; }
+.season-tab:hover { border-color:var(--accent); color:var(--text-strong); }
+.season-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.season-tab .cnt { font-size:11px; font-weight:500; opacity:.7; margin-left:5px; }
+.season-tab.active .cnt { opacity:.85; }
+@media (max-width:760px){ .navrow { flex-direction:column; align-items:stretch; } }
+.season-sel { display:inline-block; vertical-align:middle; margin-left:6px; padding:2px 9px; border-radius:7px; background:var(--card2); border:1px solid var(--accent); color:var(--accent); font-size:15px; font-weight:700; cursor:pointer; }
+.season-sel:focus { outline:none; border-color:var(--accent); }
+.section-title { font-size:18px; font-weight:700; color:var(--text-strong); margin:24px 0 12px; padding-left:12px; border-left:4px solid var(--accent); }
+.section-title .note-flag { display:block; font-size:12px; color:var(--note-flag); font-weight:400; margin-top:4px; }
+.ov-table, .team-table { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); border-radius:10px; overflow:hidden; margin-bottom:8px; }
+thead tr { background:var(--card2); }
+th { padding:11px 8px; text-align:center; color:var(--text-dim); font-weight:600; border-bottom:2px solid var(--border); white-space:nowrap; cursor:pointer; user-select:none; }
+th.left { text-align:left; }
+th.sortable:hover { color:var(--text-strong); }
+th.sortable.sorted { color:var(--accent); background:var(--card2); box-shadow:inset 0 -2px 0 var(--accent); }
+th .arr { font-size:10px; margin-left:2px; }
+td { padding:8px; text-align:center; border-bottom:1px solid var(--border); color:var(--text2); }
+td.left { text-align:left; }
+tbody tr:hover { background:var(--card2); }
+td.col-sel { background:var(--col-sel-bg); }
+td.col-sel .bar { background:var(--accent); }
+.bar-wrap { display:flex; align-items:center; gap:8px; justify-content:center; }
+.bar { height:10px; border-radius:5px; background:var(--bar-grad); min-width:2px; }
+.pct { font-size:12px; color:var(--text-muted); min-width:48px; text-align:right; }
+.per-round { font-size:12px; color:var(--text-dim); min-width:66px; text-align:left; font-variant-numeric:tabular-nums; }
+.bignum { font-size:15px; font-weight:700; color:var(--text-strong); }
+.ov-note { font-size:11.5px; color:var(--text-muted); line-height:1.6; margin-top:6px; }
+/* 可悬停查看环比的值：虚线下划线做提示，别太抢眼 */
+.cmp-able { cursor:pointer; border-bottom:1px dotted var(--text-dim); }
+.team-table td.name { font-weight:600; color:var(--text-strong); }
+.team-table td.rk { color:var(--rk); font-weight:700; }
+.pts-inline { margin-left:6px; font-size:12px; font-weight:700; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+.champ { display:inline-flex; vertical-align:middle; margin-left:5px; color:var(--rk); }
+.champ svg { width:15px; height:15px; display:block; }
+.move { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:4px; margin-left:3px; flex:0 0 auto; font-size:10px; line-height:1; font-weight:800; }
+.move.up { color:#fff; background:var(--green); }
+.move.down { color:#fff; background:#e74c3c; }
+.cmp-up { color:var(--green); }
+.cmp-down { color:#e74c3c; }
+.cmp-eq { color:var(--text-muted); }
+.avg-cmp { cursor:pointer; }
+.crest { width:24px; height:24px; object-fit:contain; vertical-align:middle; margin-right:6px; border-radius:4px; background:transparent; padding:1px; filter:drop-shadow(0 0 1px rgba(0,0,0,.55)); }
+[data-theme="light"] .crest, [data-theme="light"] .league-tab img { filter:drop-shadow(0 0 1px rgba(0,0,0,.3)); }
+.crest-fallback { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; color:#fff; font-size:11px; font-weight:700; margin-right:6px; vertical-align:middle; }
+.note { font-size:12px; color:var(--text-muted); background:var(--card); padding:12px 14px; border-radius:8px; border:1px solid var(--border); margin:10px 0 4px; }
+.legend { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px; }
+.lg-item { display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); cursor:pointer; padding:5px 11px; border-radius:18px; border:1px solid var(--border); background:var(--card); transition:all .15s; user-select:none; }
+.lg-item:hover { border-color:var(--accent); color:var(--text-strong); }
+.lg-item.off { opacity:0.45; text-decoration:line-through; }
+.lg-item.off .sw { opacity:0.4; }
+.lg-item .sw { width:14px; height:14px; border-radius:3px; display:inline-block; }
+.chart-card { background:var(--chart-bg); border:1px solid var(--border); border-radius:12px; padding:16px; overflow-x:auto; position:relative; }
+.trend-svg circle.tp { stroke:var(--chart-bg); stroke-width:1.2; cursor:pointer; transition:stroke-width .1s; }
+.trend-svg circle.tp:hover { stroke:var(--text-strong); stroke-width:2.4; }
+.trend-tip { position:fixed; z-index:60; pointer-events:none; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:12px; line-height:1.5; padding:8px 10px; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.25); display:none; white-space:nowrap; }
+.trend-tip b { color:var(--text-strong); }
+.footer { text-align:center; padding:18px; color:var(--muted); font-size:12px; margin-top:18px; }
+/* 走势总览（五联赛汇总）：每张图配联赛小标题 */
+.t-chart-title { font-size:14px; font-weight:700; color:var(--text-strong); margin:4px 0 8px; }
+/* 英超 2/3 球走势面板 */
+.seq-strips { display:flex; flex-direction:column; gap:5px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:14px; overflow-x:auto; }
+.seq-row { display:flex; align-items:center; gap:10px; }
+.seq-name { display:flex; align-items:center; gap:6px; width:150px; flex:0 0 150px; font-size:13px; color:var(--text-strong); font-weight:600; white-space:nowrap; }
+.seq-name img.crest { width:20px; height:20px; }
+.seq-team-toggle{border:0;background:transparent;cursor:pointer;padding:2px 4px;color:inherit;text-align:left;}
+.seq-team-toggle:hover{color:var(--accent);}
+.seq-eye{font-size:10px;color:var(--text-muted);margin-left:auto;opacity:.75;}
+.seq-team-toggle:not(.on){opacity:.55;}
+.seq-row.seq-hidden{opacity:.6;}
+.seq-strip { display:flex; flex:1; gap:2px; min-width:280px; }
+.sq { flex:1 1 0; height:20px; border-radius:2px; min-width:3px; }
+.sq.s0 { background:var(--border); }
+.sq.s2 { background:var(--green); }
+.sq.s3 { background:var(--accent); }
+.seq-cnt { font-size:11.5px; color:var(--text-dim); flex:0 0 auto; white-space:nowrap; }
+.seq-table { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); border-radius:10px; overflow:hidden; margin-bottom:8px; }
+.seq-table th, .seq-table td { padding:8px; text-align:center; border-bottom:1px solid var(--border); color:var(--text2); }
+.seq-table th { background:var(--card2); color:var(--text-dim); font-weight:600; }
+.seq-table td.name { text-align:left; font-weight:600; color:var(--text-strong); }
+.seq-table tbody tr:hover { background:var(--card2); }
+.seq-scroll { overflow-x:auto; }

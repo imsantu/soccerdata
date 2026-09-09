@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="description" content="叕中啦 · 欧洲五大联赛（英超/西甲/德甲/意甲/法甲）各赛季单场总进球数分布、球队进球榜与走势。">
+<title>欧洲五大联赛 · 总进球分布</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<div id="siteNav"></div>
+<script>window.SITE_ROOT='../';window.GOALS_ASSET='../assets/';</script>
+<script src="../assets/js/site.js"></script>
+
+<div id="mount"></div>
+
+<!-- 桌面版 / 移动版两套骨架，由 goals-app.js 依据屏幕宽度二选一注入 #mount -->
+<script type="text/plain" id="pcBody"><button class="theme-btn" id="themeBtn" onclick="toggleTheme()"></button>
+<div class="trend-tip" id="avgTip"></div>
+<div class="scroll-nav">
+  <button class="scroll-btn" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到页头"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+  <button class="scroll-btn" id="toBottom" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})" title="回到页脚"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></button>
+</div>
+<header class="site-head">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <defs><linearGradient id="qzlGoalGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a9eff"/><stop offset="1" stop-color="#00b894"/></linearGradient></defs>
+      <rect width="40" height="40" rx="11" fill="url(#qzlGoalGrad)"/>
+      <g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="20" cy="20" r="9.4"/><path d="M20 15 L24.76 18.55 L22.94 24.05 L17.06 24.05 L15.24 18.55 Z" fill="#fff" stroke="none"/>
+        <path d="M20 15 V10.6"/><path d="M24.76 18.55 L28.99 17.26"/><path d="M22.94 24.05 L25.53 27.61"/><path d="M17.06 24.05 L14.47 27.61"/><path d="M15.24 18.55 L11.01 17.26"/>
+      </g>
+    </svg>
+    <span class="brand-txt"><span class="nm">叕中啦</span><span class="sl">叕中啦 · 五大联赛数据站</span></span>
+  </div>
+  <nav class="crumb" id="headCrumb" aria-label="当前位置"></nav>
+</header>
+<div class="container">
+  <div class="header"></div>
+  <div class="stickynav">
+    <div class="league-tabs" id="leagueTabs"></div>
+    <div class="navrow"><div class="season-tabs" id="seasonTabs"></div></div>
+  </div>
+  <div id="overview"></div>
+  <div id="teams"></div>
+  <div id="trend"></div>
+  <div id="seq23"></div>
+
+  <div class="footer">逐场赛果：<a href="https://www.football-data.co.uk/data.php" target="_blank">Football-Data.co.uk</a>　｜　最终积分榜：按用户提供的正确榜单逐队核对　｜　队徽来源 Wikipedia　｜　最近核验：2026-09-03 04:31（北京时间）　｜　报告更新时间：2026-09-03 04:31</div>
+</div></script>
+
+<script type="text/plain" id="mbBody"><div class="appbar">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="qzlGoalMbGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a9eff"/><stop offset="1" stop-color="#00b894"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#qzlGoalMbGrad)"/><g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="20" r="9.4"/><path d="M20 15 L24.76 18.55 L22.94 24.05 L17.06 24.05 L15.24 18.55 Z" fill="#fff" stroke="none"/><path d="M20 15 V10.6"/><path d="M24.76 18.55 L28.99 17.26"/><path d="M22.94 24.05 L25.53 27.61"/><path d="M17.06 24.05 L14.47 27.61"/><path d="M15.24 18.55 L11.01 17.26"/></g></svg>
+    <span class="brand-txt"><span class="nm">叕中啦</span><span class="sl">叕中啦 · 五大联赛数据站</span></span>
+  </div>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌓 浅色</button>
+</div>
+
+<div class="stickynav" id="stickynav">
+  <div class="pillrow" id="leagueTabs"></div>
+  <div class="pillrow seasonrow" id="seasonTabs"></div>
+</div>
+
+<main>
+  <div id="overview"></div>
+  <div id="teams"></div>
+  <div id="trend"></div>
+  <div id="seq23"></div>
+  <div class="footer">数据源：<a href="https://www.football-data.co.uk/data.php" target="_blank">Football-Data.co.uk</a>（逐场赛果）　｜　队徽来源 Wikipedia<br>数据源最近核验：2026-09-03 03:48（北京时间）　｜　报告更新时间：2026-09-03 03:48</div>
+</main>
+
+<button class="fab" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+<div class="tap-tip" id="tip"></div></script>
+
+<script src="../assets/js/goals-data.js"></script>
+<script src="../assets/js/goals-app.js"></script>
+</body>
+</html>

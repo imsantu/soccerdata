@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="cbToKsTEHoGBVEg3cP0ci5">
+<head data-page-node-id="YxL5CW4cxotyTNHo0gKds8">
+<meta charset="UTF-8" data-page-node-id="BdvsLjsyoaGh5UC2xqi9ds">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" data-page-node-id="pswrDEK8LVTEwrhjxKFU3U">
+<meta name="theme-color" content="#0f1117" data-page-node-id="QHJm5dUS3RjRfEZG2bnQy9">
+<meta name="description" content="叕中啦 · 足球数据中心：欧洲五大联赛与五大次级联赛的进球数分布、平局率、比分分布与各队统计。" data-page-node-id="04CAaIW8y2YyAoIRgw60M8">
+<title>叕中啦 · 足球数据中心</title>
+<link rel="stylesheet" href="assets/css/site.css" data-page-node-id="uUmFiPJ0p5EW0uNkQxRRHg">
+</head>
+<body data-page-node-id="enuNzSiK9KAh7jcKH8v7DD">
+<div id="siteNav" data-page-node-id="gRwN08yKjnQuXSoOKNmMaV"></div>
+<script>window.SITE_ROOT='';</script>
+<script src="assets/js/site.js"></script>
+
+<div class="home" data-page-node-id="FuEG4AGClxRp4DGa1XQ43v">
+  <div class="home-hero" data-page-node-id="nxftpd5ML5tpbiBEskdBQh">
+    <h1 data-page-node-id="Ll070t7ZZfCmAZwvGfiCiX"><span class="plain" data-page-node-id="MHz43Ao7TbXpFiJloGnLIE">叕中啦 ·</span> 足球数据中心</h1>
+    <p data-page-node-id="NZULcHu2cUWr11BvUJ1Knr">汇总 欧洲五大联赛（英超 / 西甲 / 德甲 / 意甲 / 法甲）与 五大次级联赛（英冠 / 西乙 / 德乙 / 法乙 / 意乙）
+       近五个赛季的赛果统计：单场总进球数分布、平局率、比分分布、各轮走势与各队表现。
+       顶部可自由切换「统计主题」与「联赛层级」。</p>
+  </div>
+
+  <div class="home-grid" id="homeCards" data-page-node-id="WxdpA1CWpYzK434iR58QPe"></div>
+
+  <div class="home-note" data-page-node-id="tQ4Lbvcv6kCoW27anz2cgH">
+    数据源：<a href="https://github.com/openfootball/football.json" target="_blank" rel="noopener" data-page-node-id="A1wTp6q3bo9QX6Tb1f26y9">openfootball/football.json</a>、
+    <a href="https://www.football-data.co.uk/data.php" target="_blank" rel="noopener" data-page-node-id="R4kRjwWU6b09kPWliOI0nj">Football-Data.co.uk</a>；队徽来源 Wikipedia。<br data-page-node-id="XGvFT0abLPhk4p2fQZpRui">
+    各页页脚标注了「数据源更新时间」与「本页更新时间」，以页面内标注为准。<br data-page-node-id="jhblVcqERnZSXzDLcMg0N4">
+    新增页面：编辑 <code data-page-node-id="CxuAjyqSUtIYZ8zLCPLbmH">assets/js/site.js</code> 顶部的 <code data-page-node-id="D9sfxDXDA5k7fLYLEMi9Ag">SITE_NAV</code> 配置即可，导航与首页卡片会自动同步。
+  </div>
+</div>
+
+<script>
+(function(){
+  var NAV = window.SITE_NAV || [], url = window.SITE_PAGE_URL || function(f){ return 'pages/'+f; };
+  var box = document.getElementById('homeCards');
+  if(!box) return;
+  var h = '';
+  NAV.forEach(function(gp){
+    gp.items.forEach(function(it){
+      h += '<a class="home-card" href="'+url(it.file)+'">'
+         + '<span class="tag'+(it.ready?'':' wait')+'">'+gp.label+'</span>'
+         + '<h3>'+it.label+(it.ready?'':' · 敬请期待')+'</h3>'
+         + '<div class="d">'+it.desc+'</div>'
+         + '<div class="go">'+(it.ready?'进入查看 →':'敬请期待')+'</div>'
+         + '</a>';
+    });
+  });
+  box.innerHTML = h;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+#!/bin/bash
+# 足球数据站 · 自动更新
+#   1. 从 football-data.co.uk / openfootball 抓取 2026-27 最新赛果
+#   2. 重算三份报告的数据（平局·五大 / 平局·次级 / 进球数）
+#   3. 把数据块同步进静态站点（带备份 + 体检，历史赛季绝不改动）
+#   4. git 提交并推送到 GitHub
+# 由 launchd 在每周一、周四 09:03 调用。
+
+set -uo pipefail
+
+WS="/Users/santu/WorkBuddy AI/2026-09-02-02-18-19"
+GOALS_WS="/Users/santu/WorkBuddy AI/2026-08-24-11-07-48"
+SITE="/Users/santu/Desktop/soccerdata/football-data-site"
+AUTO="$SITE/tools"
+PY="/usr/bin/python3"
+
+mkdir -p "$AUTO/logs" "$AUTO/backups"
+LOG="$AUTO/logs/$(date '+%Y-%m-%d_%H%M%S').log"
+exec > >(tee -a "$LOG") 2>&1
+
+notify() {  # notify "标题" "正文"
+    osascript -e "display notification \"$2\" with title \"$1\"" >/dev/null 2>&1 || true
+}
+
+step() {
+    local name="$1"; shift
+    echo
+    echo "──────── $name ────────"
+    "$@"
+    local rc=$?
+    if [ "$rc" -ne 0 ]; then
+        echo "[FAIL] $name（退出码 $rc）"
+        echo "=== 本次更新中止，站点未做任何改动 ==="
+        echo "日志：$LOG"
+        notify "足球数据更新失败" "$name 失败，详见日志"
+        exit 1
+    fi
+    echo "[OK] $name"
+}
+
+echo "════════ 足球数据自动更新 $(date '+%F %T') ════════"
+
+# 0) 清掉 football-data 的 /tmp 缓存。
+#    build_2026_27.py 的 fetch() 已经自清，这里再兜一层底，防止将来脚本被回滚。
+rm -f /tmp/fd_*_2627.csv
+
+# 1) 抓取并重建 2026-27（五大联赛 + 五大次级联赛）
+step "抓取 2026-27 最新赛果" "$PY" "$WS/build_2026_27.py"
+
+# 2) 平局统计 · 五大联赛
+step "分析：平局·五大联赛"  "$PY" "$WS/analyze_all.py"
+step "出报告：平局·五大联赛" "$PY" "$WS/build_big5.py"
+
+# 3) 平局统计 · 次级联赛
+step "分析：平局·次级联赛"  "$PY" "$WS/analyze_champ.py"
+step "出报告：平局·次级联赛" "$PY" "$WS/build_champ.py"
+
+# 4) 进球数统计（该页是增量打补丁式更新 2026-27 的进球分布）
+step "更新：进球数统计 2026-27" "$PY" "$WS/update_seq23_2627.py"
+
+# 5) 同步数据块到站点
+step "同步数据到站点" "$PY" "$AUTO/sync_site.py"
+
+# 6) 提交并推送
+SUMMARY="$(grep -m1 '^SUMMARY|' "$LOG" | sed 's/^SUMMARY|//')"
+echo
+echo "──────── git 提交与推送 ────────"
+cd "$SITE" || { echo "[FAIL] 站点目录不存在"; exit 1; }
+
+if [ ! -d .git ]; then
+    echo "[SKIP] 站点尚未 git init，跳过提交"
+else
+    git add -A
+    if git diff --cached --quiet; then
+        echo "[SKIP] 没有需要提交的改动"
+    else
+        MSG="chore(data): 同步 2026-27 赛果 $(date '+%F')"
+        [ -n "$SUMMARY" ] && MSG="$MSG
+
+$SUMMARY"
+        git commit -q -F - <<< "$MSG" || { echo "[FAIL] git commit 失败"; exit 1; }
+        echo "[OK] 已提交：$(git log -1 --format='%h %s')"
+        if git remote get-url origin >/dev/null 2>&1; then
+            if git push origin HEAD 2>&1; then
+                echo "[OK] 已推送到 origin"
+                notify "足球数据已更新" "${SUMMARY:-数据已同步}"
+            else
+                echo "[FAIL] git push 失败（提交已保留在本地，下次会重试推送）"
+                notify "足球数据推送失败" "提交已在本地，需检查 SSH/仓库"
+                exit 1
+            fi
+        else
+            echo "[SKIP] 未配置 origin 远程仓库，仅提交到本地"
+        fi
+    fi
+fi
+
+echo
+echo "════════ 完成 $(date '+%F %T') ════════"
+echo "日志：$LOG"

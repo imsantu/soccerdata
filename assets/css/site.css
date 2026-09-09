@@ -1,0 +1,277 @@
+/* ==========================================================================
+   站点外壳：全宽冻结顶栏（bilibili 风三段式）
+
+     行 1   左：品牌（马善政毛笔楷书 + 渐变）  中：联赛 tab  右：3 个下拉 + 主题按钮
+     行 2   二级 tab：赛季年份居中
+
+   · 顶栏 position:fixed + 等高占位块，绕开 sticky 包含块坑
+   · 主题由外壳唯一持有（qzl_theme），跨页状态一致
+   · 「范围」下拉菜单读取页面的 #winSwitch 按钮（不修改页面 JS），点击反向触发原按钮
+   ========================================================================== */
+
+/* —— 品牌字：马善政毛笔楷书（OFL，仅含「叕中啦」三字，1.6KB） —— */
+@font-face{
+  font-family:"BrandScript";
+  font-weight:400; font-style:normal; font-display:swap;
+  src:url(../font/ma-shan-zheng.woff2) format("woff2");
+}
+
+:root{
+  --bg:#0f1117; --card:#1a1d29; --card2:#252836; --border:#2a2d3a;
+  --text:#e0e0e0; --text2:#cccccc; --text-dim:#aaaaaa; --text-strong:#ffffff; --text-muted:#8a90a0; --muted:#555555;
+  --accent:#4a9eff; --green:#00b894; --chart-bg:#151823;
+  --bar-grad:linear-gradient(90deg,#4a9eff,#00b894);
+  --tab-grad:linear-gradient(90deg,#00e6ff,#3d8bff 52%,#b96bff);
+  --tab-on:#28dcff; --tab-on-bg:rgba(40,200,255,.18);
+  --brand-grad:linear-gradient(135deg,#5fb0ff 0%,#28e0ff 45%,#00d2a3 100%);
+  --hover-bg:rgba(255,255,255,.07);
+  --sel-h-bg:rgba(255,255,255,.09);
+  --site-top-h:0px;
+  --site-pad:24px;
+  --h-row:64px;
+  --h-ctl:36px;
+  --r-ctl:10px;
+}
+[data-theme="light"]{
+  --bg:#eef1f6; --card:#ffffff; --card2:#eef1f6; --border:#d8dee9;
+  --text:#1f2430; --text2:#3a4252; --text-dim:#55607a; --text-strong:#10141c; --text-muted:#8a93a6; --muted:#9aa3b2;
+  --accent:#2f7bdc; --green:#0a9b73; --chart-bg:#ffffff;
+  --bar-grad:linear-gradient(90deg,#2f7bdc,#0a9b73);
+  --tab-on:#0077e6; --tab-on-bg:rgba(0,119,230,.14);
+  --brand-grad:linear-gradient(135deg,#2f7bdc 0%,#1aa3ff 45%,#0a9b73 100%);
+  --hover-bg:rgba(0,0,0,.05);
+  --sel-h-bg:rgba(0,0,0,.06);
+}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);}
+*{box-sizing:border-box;}                 /* 兜底：首页/占位页没有页面 CSS，避免 .site-top-in 因 content-box 撑出横向滚动 */
+html body{padding-top:0;}                  /* 顶部留白交给外壳的等高占位块 */
+#mount{display:block;}
+
+/* 页面自带品牌栏已由外壳统一呈现，整块隐藏 */
+body .site-head,
+body .appbar{display:none !important;}
+
+/* 面包屑隐藏（用户反馈：不可点击、占地方，整块拿掉） */
+body #headCrumb{display:none !important;}
+
+/* 范围开关由外壳的下拉菜单代理，原 #winSwitch 搬出可视区但保留 DOM 供页面 JS 操作 */
+body #winSwitch{position:absolute !important; left:-99999px !important; top:-99999px !important;
+                width:1px;height:1px;opacity:0;pointer-events:none;}
+
+/* 统一主题：页面自带的主题按钮全部隐藏，只留外壳右上角这一个 */
+body .theme-btn:not(#siteThemeBtn){display:none !important;}
+/* 但进球 PC 模板里有 `.theme-btn{position:fixed;top:14px;right:14px;z-index:50}` 这条全局规则，
+   会把外壳的主题按钮也拽到视口右上、盖到下拉菜单上。把外壳按钮定位相关属性全部复位即可。 */
+body #siteThemeBtn{position:relative !important; inset:auto !important; top:auto !important; right:auto !important;
+                   left:auto !important; bottom:auto !important; z-index:auto !important; margin:0 !important;}
+
+/* 页面里原本 sticky 的排序栏改到外壳下方 */
+body .sortbar{top:var(--site-top-h,0px) !important;}
+
+/* 联赛 / 年份被搬进外壳后，页面里剩下的空壳不再占位 */
+body .stickynav.site-moved{display:none !important;}
+
+/* ---------------- 顶部外壳（fixed，铺满宽度） ---------------- */
+.site-top{
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 4px 18px rgba(0,0,0,.14);
+  backdrop-filter:saturate(160%) blur(10px);
+}
+[data-theme="light"] .site-top{background:rgba(255,255,255,.86);}
+.site-top-spacer{display:block;height:var(--site-top-h,0px);}
+
+/* 铺满浏览器宽度，只在两侧留内边距 */
+.site-top-in{width:100%;padding:0 var(--site-pad);}
+
+/* 行 1：左品牌 · 中联赛 tab · 右下拉 + 主题 */
+.site-top-row{display:flex; align-items:center; gap:18px; height:var(--h-row);}
+
+/* —— 品牌 —— */
+.site-brand{display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; flex:0 0 auto;
+            padding:6px 10px 6px 4px; border-radius:12px; transition:background .15s;}
+.site-brand:hover{background:var(--hover-bg);}
+.site-brand .mark{width:38px;height:38px;flex:0 0 auto;border-radius:11px;display:block;
+                  box-shadow:0 4px 14px rgba(74,158,255,.32);}
+.site-brand .nm{
+  font-family:"BrandScript","Ma Shan Zheng","马善政","STXingkai","华文行楷","Songti SC","STSong","SimSun",serif;
+  font-size:30px; line-height:1; padding-top:6px;
+  background:var(--brand-grad); -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent;
+  letter-spacing:1px;
+  transition:filter .15s;
+}
+.site-brand:hover .nm{filter:brightness(1.08);}
+
+/* 中段：页面的联赛 tab 搬到这里，居中且可横向滚动 */
+.site-center{
+  flex:1 1 auto; min-width:0;
+  display:flex; align-items:center; justify-content:center; gap:4px;
+  overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none;
+  padding:0 6px;
+}
+.site-center::-webkit-scrollbar{display:none;}
+.site-center > *{flex:0 0 auto;}
+
+/* 中段里的联赛 tab 浮动小修饰 */
+.site-center .season-tab,
+.site-center .pill{transition:transform .15s,background .15s,color .15s;}
+.site-center .season-tab:hover:not(.on),
+.site-center .pill:hover:not(.on){background:var(--hover-bg);color:var(--text-strong);}
+
+/* 右段：3 个下拉 + 主题 */
+.site-right{flex:0 0 auto; display:flex; align-items:center; gap:8px;}
+
+/* —— 下拉菜单 —— */
+.sel{position:relative;flex:0 0 auto;}
+.sel-btn{
+  display:inline-flex; align-items:center; gap:5px;
+  height:var(--h-ctl); padding:0 12px; border-radius:var(--r-ctl);
+  border:1px solid var(--border); background:transparent; color:var(--text-dim);
+  cursor:pointer; font-family:inherit; font-size:13px; font-weight:700; line-height:1;
+  white-space:nowrap; transition:border-color .15s,color .15s,background .15s;
+  appearance:none; -webkit-appearance:none;
+}
+.sel-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--sel-h-bg);}
+.sel-btn .caret{width:12px;height:12px;flex:0 0 auto;transition:transform .18s;opacity:.85;}
+.sel.open .sel-btn{border-color:var(--accent);color:var(--accent);background:var(--sel-h-bg);}
+.sel.open .sel-btn .caret{transform:rotate(180deg);}
+.sel-menu{
+  position:absolute; top:calc(100% + 6px); right:0; min-width:152px;
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  box-shadow:0 12px 36px rgba(0,0,0,.32); padding:6px; display:none; z-index:210;
+  transform-origin:top right; animation:selIn .14s ease-out;
+}
+@keyframes selIn{from{opacity:0;transform:scale(.96) translateY(-4px);} to{opacity:1;transform:scale(1) translateY(0);}}
+.sel.open .sel-menu{display:block;}
+.sel-item{
+  display:flex; align-items:center; gap:8px; width:100%; height:36px;
+  padding:0 12px; border:0; background:transparent; border-radius:8px;
+  color:var(--text2); font-family:inherit; font-size:13px; font-weight:700;
+  line-height:1; text-align:left; white-space:nowrap; cursor:pointer;
+  appearance:none; -webkit-appearance:none;
+  transition:background .12s,color .12s;
+}
+.sel-item:hover{background:var(--sel-h-bg);color:var(--text-strong);}
+.sel-item.on{color:var(--tab-on);background:var(--tab-on-bg);}
+.sel-item.on::after{content:"✓"; margin-left:auto; font-size:12px; opacity:.9;}
+.sel-item.wait{opacity:.55;cursor:not-allowed;}
+.sel-item .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#f0a92e;margin-left:2px;}
+
+/* 范围下拉里给「近五季/近三季」加个日历小图标 */
+.sel[data-kind="w"] .sel-btn::before{
+  content:""; display:inline-block; width:13px; height:13px; margin-right:-2px;
+  background:no-repeat center/contain
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3.2 2'/></svg>");
+  opacity:.85;
+}
+
+/* —— 主题按钮（图标方块） —— */
+#siteThemeBtn{
+  width:var(--h-ctl); height:var(--h-ctl); padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:var(--r-ctl); background:transparent;
+  border:1px solid var(--border); color:var(--text-dim);
+  cursor:pointer; font-size:16px; line-height:1;
+  font-family:inherit; transition:border-color .15s,color .15s,background .15s;
+}
+#siteThemeBtn:hover{border-color:var(--accent);color:var(--accent);background:var(--sel-h-bg);}
+
+/* 行 2：二级 tab（赛季年份居中），内容由页面脚本动态填充 */
+.site-top-sub{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  border-top:1px solid var(--border); padding:6px 0 8px;
+  min-height:36px;
+}
+.site-top-sub .season-tabs,
+.site-top-sub .pillrow{justify-content:center; padding:0;}
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width:1240px){
+  :root{--site-pad:18px;}
+}
+@media (max-width:1180px){
+  :root{--site-pad:14px;}
+  .site-top-row{gap:12px;}
+  .site-brand .nm{font-size:26px;}
+}
+@media (max-width:1000px){
+  .site-top-row{gap:10px;}
+  .sel-btn{padding:0 10px;font-size:12.5px;}
+  .sel[data-kind="w"] .sel-btn::before{display:none;}
+}
+@media (max-width:860px){
+  :root{--site-pad:12px;}
+  .site-top-row{height:auto; padding:10px 0; flex-wrap:wrap; gap:8px 10px;}
+  .site-brand{order:1;}
+  .site-brand .nm{font-size:22px;padding-top:4px;}
+  .site-right{order:2; margin-left:auto;}
+  .site-center{order:3; flex:1 1 100%; justify-content:flex-start;}
+  .site-top-sub{flex-wrap:wrap; padding:4px 0 2px;}
+  .site-top-sub .season-tabs,
+  .site-top-sub .pillrow{justify-content:flex-start;}
+}
+@media (max-width:560px){
+  .sel-btn{padding:0 9px;font-size:12px;height:34px;}
+  #siteThemeBtn{width:34px;height:34px;font-size:14px;}
+  :root{--h-ctl:34px;}
+  .site-brand .nm{font-size:20px;}
+}
+
+/* ---------------- 首页 ---------------- */
+.home{ max-width:1180px; margin:0 auto; padding:26px 14px 40px; }
+.home-hero{
+  border:1px solid var(--border); border-radius:18px; padding:26px 24px;
+  background:linear-gradient(135deg,var(--card) 0%,var(--card2) 100%);
+  box-shadow:0 6px 22px rgba(0,0,0,.16);
+}
+.home-hero h1{
+  font-size:26px; font-weight:800; letter-spacing:.5px; margin:0 0 8px; color:var(--text-strong);
+  background:var(--bar-grad); -webkit-background-clip:text; background-clip:text;
+}
+.home-hero h1 .plain{color:var(--text-strong);-webkit-text-fill-color:var(--text-strong);}
+.home-hero p{margin:0;color:var(--text-dim);font-size:13.5px;line-height:1.85;}
+.home-grid{
+  display:grid; gap:14px; margin-top:20px;
+  grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+}
+.home-card{
+  display:block; text-decoration:none; color:inherit;
+  border:1px solid var(--border); border-radius:16px; padding:18px;
+  background:var(--card); transition:transform .15s,border-color .15s,box-shadow .15s;
+}
+.home-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 10px 26px rgba(0,0,0,.2);}
+.home-card .tag{
+  display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;
+  background:var(--tab-on-bg);color:var(--tab-on);margin-bottom:10px;
+}
+.home-card .tag.wait{background:rgba(240,169,46,.16);color:#f0a92e;}
+.home-card h3{margin:0 0 6px;font-size:16.5px;font-weight:800;color:var(--text-strong);}
+.home-card .d{font-size:12.5px;color:var(--text-muted);line-height:1.7;min-height:42px;}
+.home-card .go{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--accent);}
+.home-note{
+  margin-top:22px;font-size:12px;color:var(--text-muted);line-height:1.9;
+  border-top:1px dashed var(--border); padding-top:14px;
+}
+.home-note code{
+  background:var(--card2);border:1px solid var(--border);border-radius:5px;
+  padding:1px 6px;font-size:11.5px;color:var(--text-dim);
+}
+
+/* ---------------- 「敬请期待」占位页 ---------------- */
+.soon{ max-width:760px; margin:0 auto; padding:70px 20px; text-align:center; }
+.soon .ico{
+  width:78px;height:78px;margin:0 auto 20px;border-radius:22px;
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+  background:var(--card2);border:1px solid var(--border);
+}
+.soon h2{margin:0 0 10px;font-size:22px;font-weight:800;color:var(--text-strong);}
+.soon p{margin:0 auto;max-width:520px;font-size:13.5px;color:var(--text-dim);line-height:1.9;}
+.soon .links{margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.soon .links a{
+  text-decoration:none;font-size:13px;font-weight:700;color:var(--accent);
+  border:1px solid var(--border);border-radius:999px;padding:8px 16px;background:var(--card);
+}
+.soon .links a:hover{border-color:var(--accent);}
+.soon .tip{margin-top:26px;font-size:12px;color:var(--text-muted);line-height:1.9;}

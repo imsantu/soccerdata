@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="description" content="叕中啦 · 五大次级联赛（英冠/西乙/德乙/法乙/意乙）近五赛季平局数据专题：平局率、比分分布、各轮走势与各队平局统计。">
+<title>叕中啦 · 五大次级联赛近五赛季平局数据（英冠/西乙/德乙/法乙/意乙）</title>
+<link rel="stylesheet" href="../assets/css/draws-champ.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<div id="siteNav"></div>
+<script>window.SITE_ROOT='../';</script>
+<script src="../assets/js/site.js"></script>
+<div class="trend-tip" id="avgTip"></div>
+
+<header class="site-head">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <defs><linearGradient id="qzlGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a9eff"/><stop offset="1" stop-color="#00b894"/></linearGradient></defs>
+      <rect width="40" height="40" rx="11" fill="url(#qzlGrad)"/>
+      <g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="20" cy="20" r="9.4"/>
+        <path d="M20 15 L24.76 18.55 L22.94 24.05 L17.06 24.05 L15.24 18.55 Z" fill="#fff" stroke="none"/>
+        <path d="M20 15 V10.6"/><path d="M24.76 18.55 L28.99 17.26"/><path d="M22.94 24.05 L25.53 27.61"/>
+        <path d="M17.06 24.05 L14.47 27.61"/><path d="M15.24 18.55 L11.01 17.26"/>
+      </g>
+    </svg>
+    <span class="brand-txt">
+      <span class="nm">叕中啦</span>
+      <span class="sl">叕中啦 · 五大次级联赛平局数据站</span>
+    </span>
+  </div>
+  <nav class="crumb" id="headCrumb" aria-label="当前位置"></nav>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌗 自动</button>
+</header>
+<div class="scroll-nav">
+  <button class="scroll-btn" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到页头"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+  <button class="scroll-btn" id="toBottom" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})" title="回到页脚"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></button>
+</div>
+
+<div class="container">
+  <div class="stickynav">
+    <div class="league-tabs" id="leagueTabs"></div>
+    <div class="navrow">
+      <div class="season-tabs" id="seasonTabs"></div>
+      <div class="win-switch" id="winSwitch" role="group" aria-label="赛季范围"></div>
+    </div>
+  </div>
+
+  <div id="viewSeason">
+    <div class="stat-strip" id="statGrid"></div>
+
+    <div class="section-title" id="stOverall"></div>
+    <div id="overview"></div>
+    <div class="ov-note" id="ovNote"></div>
+
+    <div class="section-title" id="stTrend"></div>
+    <div class="chart-card"><div id="trend"></div></div>
+
+    <div class="section-title" id="stTeams"></div>
+    <div class="teamtools" id="teamTools">
+      <button class="ttbtn" id="bkToggleTeam" type="button"></button>
+      <span class="ttsort" id="teamSortChip"></span>
+    </div>
+    <div class="tw-wrap" id="teamWrap">
+      <div class="tw" id="teamScroll">
+        <table class="team-table" id="teamTable"></table>
+      </div>
+      <div class="more-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="note" id="teamNote"></div>
+    <div class="section-title" id="form5Title">本赛季各队胜平负走势分布</div>
+    <div class="note" id="form5Note"></div>
+    <div class="form5-filter" id="form5Filter"></div>
+    <div class="form5-strips" id="form5Strips"></div>
+  </div>
+
+  <div id="viewOverview">
+    <div class="section-title" id="stTop"></div>
+    <div class="findings" id="findings"></div>
+    <div class="top-tools" id="topTools">
+      <span id="topGroups"></span>
+      <span class="cnt-note" id="topCount"></span>
+    </div>
+    <div class="tw-wrap" id="topWrap">
+      <div class="tw" id="topScroll">
+        <table class="team-table top-table" id="topTable"></table>
+      </div>
+      <div class="more-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="note" id="topNote"></div>
+
+    <div class="section-title" id="cmpTitle">近五赛季横向对比
+      <span class="note-flag">五个赛季的平局总量、平局率与比分结构对照；右侧三列为「球队 + 场次数」，🏆 表示该队为该季冠军；点击表格中的赛季名或折线上的圆点可直接跳转查看该赛季。</span>
+    </div>
+    <div class="tw-wrap" id="cmpWrap">
+      <div class="tw" id="cmpScroll">
+        <table class="cmp-table" id="cmpTable"></table>
+      </div>
+      <div class="more-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="chart-card" style="margin-top:12px"><div id="cmpChart"></div></div>
+    <div class="note" id="cmpNote"></div>
+  </div>
+
+  <div id="viewBig5">
+    <div class="section-title" id="big5Title">五大次级联赛横向对照
+      <span class="note-flag" id="big5TitleNote"></span>
+    </div>
+    <div class="tw-wrap" id="big5Wrap">
+      <div class="tw" id="big5Scroll">
+        <table class="cmp-table" id="big5Table"></table>
+      </div>
+      <div class="more-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="chart-card" style="margin-top:12px"><div id="big5Chart"></div></div>
+    <div class="note" id="big5Note"></div>
+  </div>
+
+  <div class="footer">
+    <div><span class="ft-brand">叕中啦</span> · 五大次级联赛平局数据站　｜　数据源：<a href="https://github.com/openfootball" target="_blank">openfootball</a>（football.json 与各联赛国别仓库）</div>
+    <div class="ft-meta">
+      <span title="原始赛果文件最近一次抓取落盘的时间">数据源更新 <b id="ftSrc">–</b></span>
+      <span class="ft-dot">·</span>
+      <span title="本页最近一次重新生成的时间">本页更新 <b id="ftGen">–</b></span>
+      <span class="ft-dot">·</span>
+      <!-- 自动化任务标识已停用（原：由本机定时任务每日 09:00 拉取赛果并重新生成本页）。
+           后续重建自动化任务时，把下面这段注释解开即可：
+           <span class="ft-auto" title="由定时任务每日 09:00 拉取赛果并重新生成本页"><svg .../>每日 09:00 自动更新</span> -->
+    </div>
+  </div>
+</div>
+
+<div class="rtip" id="rowTip"></div>
+<div class="trend-tip" id="topTip"></div>
+<div class="trend-tip" id="formTip" style="max-width:300px"></div>
+<script src="../assets/js/draws-champ-data.js"></script>
+<script src="../assets/js/draws-champ.js"></script>
+</body>
+</html>
