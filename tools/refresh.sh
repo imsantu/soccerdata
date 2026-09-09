@@ -96,5 +96,10 @@ $SUMMARY"
 fi
 
 echo
+# 记录本次成功时间戳，供「错过窗口补跑」机制判断
+# 只有整条流水线成功到达此处（前面任意步骤失败都会 exit 1）才写，失败则留空让补跑重试
+date +%s > "$AUTO/.lastrun"
+echo "[OK] 已记录成功时间戳 → $AUTO/.lastrun"
+
 echo "════════ 完成 $(date '+%F %T') ════════"
 echo "日志：$LOG"
