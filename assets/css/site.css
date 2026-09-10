@@ -1,7 +1,7 @@
 /* ==========================================================================
    站点外壳：全宽冻结顶栏（bilibili 风三段式）
 
-     行 1   左：品牌（马善政毛笔楷书 + 渐变）  中：联赛 tab  右：3 个下拉 + 主题按钮
+     行 1   左：品牌（常规字体 + 渐变，尺寸对齐联赛 tab）  中：联赛 tab  右：3 个下拉 + 主题按钮
      行 2   二级 tab：赛季年份居中
 
    · 顶栏 position:fixed + 等高占位块，绕开 sticky 包含块坑
@@ -9,7 +9,7 @@
    · 「范围」下拉菜单读取页面的 #winSwitch 按钮（不修改页面 JS），点击反向触发原按钮
    ========================================================================== */
 
-/* —— 品牌字：马善政毛笔楷书（OFL，仅含「叕中啦」三字，1.6KB） —— */
+/* —— 品牌字 webfont（马善政楷书，仅含「叕中啦」，当前品牌改用系统常规字体，保留以备回退） —— */
 @font-face{
   font-family:"BrandScript";
   font-weight:400; font-style:normal; font-display:swap;
@@ -90,16 +90,16 @@ body .stickynav.site-moved{display:none !important;}
 
 /* —— 品牌 —— */
 .site-brand{display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; flex:0 0 auto;
-            padding:6px 10px 6px 4px; border-radius:12px; transition:background .15s;}
+            padding:11px 12px 10px 4px; border-radius:12px; transition:background .15s;}
 .site-brand:hover{background:var(--hover-bg);}
-.site-brand .mark{width:38px;height:38px;flex:0 0 auto;border-radius:11px;display:block;
-                  box-shadow:0 4px 14px rgba(74,158,255,.32);}
+.site-brand .mark{width:22px;height:22px;flex:0 0 auto;border-radius:6px;display:block;
+                  box-shadow:0 2px 8px rgba(74,158,255,.25);}
 .site-brand .nm{
-  font-family:"BrandScript","Ma Shan Zheng","马善政","STXingkai","华文行楷","Songti SC","STSong","SimSun",serif;
-  font-size:30px; line-height:1; padding-top:6px;
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  font-size:15px; font-weight:800; line-height:1; padding-top:0;
   background:var(--brand-grad); -webkit-background-clip:text; background-clip:text;
   -webkit-text-fill-color:transparent; color:transparent;
-  letter-spacing:1px;
+  letter-spacing:.3px;
   transition:filter .15s;
 }
 .site-brand:hover .nm{filter:brightness(1.08);}

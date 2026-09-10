@@ -14,6 +14,11 @@ let teamSort = {key:'rank', dir:1};
 let teamGoalsShowAll = false;
 function toggleTeamGoals(){ teamGoalsShowAll = !teamGoalsShowAll; renderTeams(); }
 let seqQuery='', seqShow2=true, seqShow3=true, seqHidden={};
+
+// 跨赛季统计口径：近五季 / 近三季（与平局页一致，由外壳顶部「范围」下拉菜单驱动）
+let SEASON_WIN = 5;
+// lg.order 为「新 → 旧」，取最近 N 季；进行中的最新季天然落在最前，始终在窗口内
+function winSeasons(lg){ return (lg && lg.order ? lg.order : []).slice(0, SEASON_WIN); }
 let lastSortKey = 'rank';   // 记录上次排序列，用于判断是否需要自动滚动到该列
 
 const THEME_KEY='fbg_theme';
@@ -170,7 +175,10 @@ function buildSeasonTabs(){
   el.style.display='';
   el.innerHTML='';
   var lg=leagueOf(currentLeague);
-  lg.order.forEach(function(k){
+  // 窗口裁掉旧赛季：只显示最近 N 季，进行中的最新季始终保留
+  var ws=winSeasons(lg);
+  if(ws.indexOf(currentSeason)<0) currentSeason=ws[0];
+  ws.forEach(function(k){
     var b=document.createElement('div');
     b.className='pill'+(k===currentSeason?' active':'');
     b.textContent=dispSeason(k);
@@ -181,6 +189,24 @@ function buildSeasonTabs(){
   // 后者即便 block:'nearest' 也可能连带把整个页面纵向滚动一下，体验很突兀。
   var act=el.querySelector('.pill.active');
   if(act) el.scrollLeft = act.offsetLeft - (el.clientWidth - act.offsetWidth)/2;
+}
+/* 赛季范围开关：近五季 ⇄ 近三季（与平局页同一套分段开关交互）。 */
+function buildWinSwitch(){
+  var el=document.getElementById('winSwitch');
+  if(!el) return;
+  var opt=function(n,label){ return '<button type="button" class="wbtn'+(SEASON_WIN===n?' on':'')+'" data-win="'+n+'" title="跨赛季统计口径切换为最近 '+n+' 个赛季">'+label+'</button>'; };
+  el.innerHTML='<span class="wlab" title="跨赛季统计的赛季范围"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>范围</span>'+
+    opt(5,'近五季')+opt(3,'近三季');
+  el.querySelectorAll('[data-win]').forEach(function(b){ b.onclick=function(){ setWin(+b.getAttribute('data-win')); }; });
+}
+function setWin(n){
+  if(n!==3 && n!==5) return;
+  SEASON_WIN=n;
+  if(currentLeague!=='__all__'){
+    var ws=winSeasons(leagueOf(currentLeague));
+    if(ws.indexOf(currentSeason)<0) currentSeason=ws[0];
+  }
+  render();
 }
 
 function maxBucket(sc){ return Math.max.apply(null, BUCKETS.map(function(b){ return sc.buckets[b]; })); }
@@ -412,7 +438,7 @@ let trendMetric='count';
 function toggleTrendMetric(){ trendMetric=(trendMetric==='count'?'pct':'count'); hideTip(); renderTrendAll(); }
 
 function drawTrendChart(lg){
-  var seasons=lg.order.slice().reverse();
+  var seasons=winSeasons(lg).slice().reverse();
   var COLORS=['#4a9eff','#2ecc71','#ffd43b','#ff5252','#9b59ff','#1ab9c9','#ff9f43','#ff5fa2'];
   var allSeries=BUCKETS.map(function(b,i){
     var count=seasons.map(function(s){ return lg.scopes[s].buckets[b]; });
@@ -477,7 +503,7 @@ function drawTrendLegend(){
 var trendSeason=null; var trendLeagueHidden={}; var trendBucketHidden={};
 function renderTrendAll(){
   var leagues=DATA.leagues;
-  var seasons=leagues[0].order.filter(function(s){return s!=='2026-27';}).sort().slice(-5).reverse();
+  var seasons=leagues[0].order.filter(function(s){return s!=='2026-27';}).sort().slice(-SEASON_WIN).reverse();
   var COLORS={en:'#e0142b',es:'#ff9f1c',it:'#2ecc71',de:'#4a9eff',fr:'#9b59ff'};
   var NAMES={en:'英超',es:'西甲',it:'意甲',de:'德甲',fr:'法甲'};
   if(!trendSeason || seasons.indexOf(trendSeason)<0) trendSeason=seasons[0];
@@ -649,7 +675,7 @@ function renderSeq23(){
 
 function render(){
   hideTip();
-  buildLeagueTabs(); buildSeasonTabs();
+  buildLeagueTabs(); buildSeasonTabs(); buildWinSwitch();
   if(currentLeague==='__all__'){
     document.getElementById('seasonTabs').style.display='none';
     document.getElementById('overview').innerHTML='';

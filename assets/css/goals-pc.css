@@ -95,6 +95,16 @@ body { font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-s
 .season-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
 .season-tab .cnt { font-size:11px; font-weight:500; opacity:.7; margin-left:5px; }
 .season-tab.active .cnt { opacity:.85; }
+
+/* 赛季范围（近五季 / 近三季）分段开关：隐藏的原生 #winSwitch 被外壳下拉代理，
+   这里的样式供其按钮渲染（.on 表示当前口径，外壳读取后显示在顶部菜单）。 */
+.win-switch { flex:0 0 auto; display:inline-flex; align-items:center; gap:3px; margin-top:8px; padding:3px; border-radius:999px; background:var(--card2); }
+.win-switch .wlab { display:inline-flex; align-items:center; gap:4px; padding:0 6px 0 8px; font-size:11.5px; font-weight:700; color:var(--text-muted); white-space:nowrap; }
+.win-switch .wlab svg { width:12px; height:12px; display:block; }
+.win-switch .wbtn { border:0; background:transparent; color:var(--text-muted); cursor:pointer; padding:3px 11px; font-size:12.5px; font-weight:700; border-radius:999px; transition:all .15s; }
+.win-switch .wbtn:hover { color:var(--text-strong); }
+.win-switch .wbtn.on { background:var(--tab-grad, linear-gradient(135deg,#2f7bdc,#4a9eff)); color:#fff; box-shadow:var(--tab-glow, 0 3px 10px rgba(47,123,220,.30)); }
+@media (max-width:560px){ .win-switch { align-self:center; margin-top:2px; } }
 @media (max-width:760px){ .navrow { flex-direction:column; align-items:stretch; } }
 .season-sel { display:inline-block; vertical-align:middle; margin-left:6px; padding:2px 9px; border-radius:7px; background:var(--card2); border:1px solid var(--accent); color:var(--accent); font-size:15px; font-weight:700; cursor:pointer; }
 .season-sel:focus { outline:none; border-color:var(--accent); }

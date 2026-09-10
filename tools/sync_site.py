@@ -151,16 +151,22 @@ def main():
             print(line)
 
         shutil.copy2(dst, os.path.join(bdir, os.path.basename(dst)))
-        planned.append((job, new_text, same))
+        planned.append((job, new, cur_text, same))
 
-    updatable = [p for p in planned if not p[2]]
+    updatable = [p for p in planned if not p[3]]
     if not updatable:
         print("\n=== 三份数据均无变化，跳过写入 ===")
         print("SUMMARY|无变化")
         return
 
     print(f"\n=== 写入阶段（备份已存于 {bdir}）===")
-    for job, new_text, _ in updatable:
+    for job, new, cur_text, _ in updatable:
+        # 「本页更新」= 本次真正把数据写进站点的时刻（与「数据源更新」解耦）
+        if isinstance(new.get("meta"), dict):
+            new["meta"]["generated"] = time.strftime("%Y-%m-%d %H:%M")
+        seps = detect_separators(cur_text, job["marker"])
+        body = job["marker"] + json.dumps(new, ensure_ascii=False, separators=seps) + ";"
+        new_text = body + "\n" if cur_text.endswith("\n") else body
         with open(job["dst"], "w", encoding="utf-8") as f:
             f.write(new_text)
         print(f"  [OK] 已写入 {job['dst']}")
