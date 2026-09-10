@@ -4,13 +4,13 @@
   --accent:#4a9eff; --green:#00b894; --axis:#262a38; --chart-bg:#151823;
   --bar-grad:linear-gradient(90deg,#4a9eff,#00b894); --rk:#f1c40f; --note-flag:#e17055; --col-sel-bg:rgba(74,158,255,.12);
   /* 一级 Tab（联赛导航）：选中态用高饱和亮色 + 渐变下划线，避免整块方块抢走内容焦点 */
-  --tab-on:#28dcff; --tab-on-bg:rgba(40,200,255,.18); --tab-grad:linear-gradient(90deg,#00e6ff,#3d8bff 52%,#b96bff);
+  --tab-on:#28dcff; --tab-on-bg:rgba(40,200,255,.18); --tab-grad:linear-gradient(90deg,#00e6ff,#3d8bff 52%,#b96bff); --f5-w:var(--green); --f5-d:var(--accent); --f5-l:#e74c3c;
   --tab-glow:0 0 18px rgba(40,200,255,.65);
 }
 [data-theme="light"]{
   --bg:#eef1f6; --card:#ffffff; --card2:#eef1f6; --border:#d8dee9;
   --text:#1f2430; --text2:#3a4252; --text-dim:#55607a; --text-strong:#10141c; --text-muted:#8a93a6; --muted:#9aa3b2;
-  --accent:#2f7bdc; --green:#0a9b73; --axis:#e2e8f0; --chart-bg:#ffffff;
+  --accent:#2f7bdc; --green:#0a9b73; --axis:#e2e8f0; --chart-bg:#ffffff; --f5-w:var(--green); --f5-d:var(--accent); --f5-l:#e74c3c;
   --bar-grad:linear-gradient(90deg,#2f7bdc,#0a9b73); --rk:#c79a00; --note-flag:#d65a3a; --col-sel-bg:rgba(47,123,220,.10);
   --tab-on:#0077e6; --tab-on-bg:rgba(0,119,230,.14); --tab-grad:linear-gradient(90deg,#1aa3ff,#2f7bdc 52%,#8a3fe4);
   --tab-glow:0 0 14px rgba(26,140,255,.45);
@@ -116,28 +116,40 @@ body { font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-s
 .form5-filter .form5-toggle.on { opacity:1; color:var(--text-strong); background:var(--card2); }
 .form5-toggle[data-r="W"].on { border-color:#00b894; }
 .form5-toggle[data-r="D"].on { border-color:#4a9eff; box-shadow:inset 0 -3px 0 #4a9eff; }
-.form5-toggle[data-r="L"].on { border-color:#e74c3c; }
+.form5-toggle[data-r="L"].on { border-color:var(--f5-l); }
 .form5-filter .form5-hint { color:var(--text-muted); font-size:11.5px; margin-left:auto; }
-.form5-strips { --f5-w:#00b894; --f5-d:#4a9eff; --f5-l:#e74c3c; display:flex; flex-direction:column; gap:7px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; overflow-x:auto; }
-.form5-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; min-width:700px; }
-.form5-name { width:206px; flex:0 0 206px; display:flex; align-items:center; gap:6px; white-space:nowrap; color:var(--text-strong); font-size:13px; font-weight:600; }
+/* 主客场筛选：与「近五季 / 近三季」同款的分段开关，排在胜平负选择器这一行的最右侧 */
+.form5-filter .ha-switch { display:inline-flex; align-items:center; gap:3px; margin-left:auto; padding:3px;
+  border:1px solid var(--border); border-radius:999px; background:var(--card); }
+.form5-filter .ha-switch .hlab { display:inline-flex; align-items:center; gap:4px; padding:0 6px 0 8px;
+  font-size:11.5px; font-weight:700; color:var(--text-muted); white-space:nowrap; }
+.form5-filter .ha-switch .hlab svg { width:12px; height:12px; display:block; }
+.form5-filter .ha-switch .habtn { border:0; background:transparent; color:var(--text-muted); cursor:pointer;
+  padding:3px 11px; border-radius:999px; font:inherit; font-size:12px; font-weight:700; line-height:1.5;
+  transition:color .15s,background .15s; white-space:nowrap; }
+.form5-filter .ha-switch .habtn:hover { color:var(--text-strong); }
+.form5-filter .ha-switch .habtn.on { background:var(--tab-grad); color:#fff; box-shadow:var(--tab-glow); }
+@media (max-width:640px){ .form5-filter .ha-switch { margin-left:0; } }
+.form5-strips { display:flex; flex-direction:column; gap:7px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; overflow-x:auto; }
+.form5-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; min-width:600px; }
+.form5-name { width:150px; flex:0 0 150px; display:flex; align-items:center; gap:6px; white-space:nowrap; color:var(--text-strong); font-size:13px; font-weight:600; }
 .form5-name .crest { width:20px; height:20px; flex:0 0 auto; }
 .form5-name .nm { overflow:hidden; text-overflow:ellipsis; min-width:0; flex:0 1 auto; }
 .form5-tlink { flex:0 0 auto; margin-left:6px; font-size:11px; font-weight:400; color:var(--text-muted); white-space:nowrap; cursor:pointer; user-select:none; }
 .form5-tlink:hover { color:var(--text2); }
-.form5-strip { display:flex; flex:1; gap:2px; min-width:320px; }
+.form5-strip { display:flex; flex:1; gap:2px; min-width:280px; }
 .form5-strip.off { display:none; }
 .form5-row.off .form5-meta { display:none; }
-.form5-cell { flex:1 1 0; min-width:3px; height:20px; border-radius:2px; cursor:default; transition:opacity .12s, box-shadow .12s; }
+.form5-cell { flex:1 1 0; min-width:3px; height:20px; border-radius:2px; cursor:pointer; transition:transform .12s, filter .12s; }
 .form5-cell.w { background:var(--f5-w); }
-.form5-cell.d { background:var(--f5-d); box-shadow:0 0 0 1px rgba(74,158,255,.55); }
+.form5-cell.d { background:var(--f5-d); }
 .form5-cell.l { background:var(--f5-l); }
 .form5-cell.start { margin-left:5px; box-shadow:inset 2px 0 0 var(--border); }
-.form5-cell.d.start { box-shadow:inset 2px 0 0 var(--border), 0 0 0 1px rgba(74,158,255,.55); }
-.form5-cell.off { opacity:.42; }
-.form5-cell:hover { opacity:1; box-shadow:0 0 0 2px var(--text-strong); }
+.form5-cell.d.start { box-shadow:inset 2px 0 0 var(--border); }
+.form5-cell.off { background:var(--border); opacity:1; box-shadow:none; }
+.form5-cell:hover { filter:brightness(1.32); transform:translateY(-2px); }
 .form5-meta { flex:0 0 auto; min-width:118px; text-align:right; font-size:11px; color:var(--text-muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
-.form5-legend { display:flex; gap:14px; margin:0 0 7px 216px; font-size:11.5px; color:var(--text-muted); }
+.form5-legend { display:flex; gap:14px; margin:0 0 7px 160px; font-size:11.5px; color:var(--text-muted); }
 .form5-legend span::before { content:''; display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; vertical-align:-1px; }
 .form5-legend .fw::before { background:var(--f5-w); } .form5-legend .fd::before { background:var(--f5-d); } .form5-legend .fl::before { background:var(--f5-l); }
 .yrcell { display:inline-flex; gap:4px; }
@@ -311,6 +323,9 @@ body { font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-s
 .note { font-size:12px; color:var(--text-muted); background:var(--card); padding:12px 14px; border-radius:8px; border:1px solid var(--border); margin:10px 0 4px; line-height:1.7; }
 .footer { text-align:center; padding:20px 12px; color:var(--muted); font-size:12px; margin-top:18px; line-height:1.8; }
 .footer .ft-brand { color:var(--text-strong); font-weight:800; letter-spacing:1px; }
+.footer b { color:var(--text-dim); font-weight:700; }
+/* 页脚改为单行：各段之间用全角空格分隔，窄屏按正常文本流回行，不再固定两行 */
+.footer { white-space:normal; }
 .footer a { color:var(--text-dim); text-decoration:underline; text-underline-offset:2px; text-decoration-color:var(--border); }
 .footer a:hover { color:var(--accent); text-decoration-color:var(--accent); }
 .ft-meta { margin-top:6px; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:7px; font-size:11.5px; color:var(--muted); }

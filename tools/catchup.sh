@@ -9,6 +9,14 @@ AUTO="$SITE/tools"
 LR="$AUTO/.lastrun"
 REFRESH="$AUTO/refresh.sh"
 
+# 路径护栏：站点绝不允许落在桌面（历史事故：旧 launchd 路径在桌面重建 soccerdata 目录）
+DESKTOP_DIR="${HOME:-/Users/santu}/Desktop"
+case "$SITE" in
+    "$DESKTOP_DIR"/*|"$DESKTOP_DIR")
+        echo "$(date '+%F %T') [catchup][FAIL] 站点路径位于桌面（$SITE），已中止"
+        exit 1 ;;
+esac
+
 # 上次成功时间戳（epoch 秒），默认 0
 LAST=0
 if [ -f "$LR" ]; then

@@ -4,30 +4,36 @@
 <meta charset="UTF-8" data-page-node-id="BdvsLjsyoaGh5UC2xqi9ds">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" data-page-node-id="pswrDEK8LVTEwrhjxKFU3U">
 <meta name="theme-color" content="#0f1117" data-page-node-id="QHJm5dUS3RjRfEZG2bnQy9">
+<!-- 预备绘制阶段按系统外观选画布底色，避免浅色主题刷新/跳转先闪一下深色（黑屏）。
+     实际主题仍由下方首帧内联脚本写 data-theme 决定，这里只管「首帧前那一下」。 -->
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1117">
+<!-- 首帧前定主题：主题原先由 site.js 在 body 里设置，浏览器会先按 :root 的深色变量画一帧，
+     浅色主题下就表现为「刷新 / 切页闪一下黑」。这段内联脚本在 head 里同步执行，首帧之前就写好
+     data-theme，闪黑从根上消失；site.js 之后会再算一次，结果一致，无副作用。 -->
+<script>(function(){try{var m=null,k=['qzl_theme','fbg_theme'];for(var i=0;i<k.length;i++){try{m=localStorage.getItem(k[i]);}catch(e){}if(m)break;}if(m!=='auto'&&m!=='light'&&m!=='dark')m='auto';var t=m;if(m==='auto'){var hh=new Date().getHours();t=(hh>=6&&hh<18)?'light':'dark';if(window.matchMedia){if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark';else if(matchMedia('(prefers-color-scheme: light)').matches)t='light';}}var r=document.documentElement;r.setAttribute('data-theme',t);r.style.colorScheme=t;var mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.setAttribute('content',t==='dark'?'#0f1117':'#eef1f6');}catch(e){}})();</script>
 <meta name="description" content="叕中啦 · 足球数据中心：欧洲五大联赛与五大次级联赛的进球数分布、平局率、比分分布与各队统计。" data-page-node-id="04CAaIW8y2YyAoIRgw60M8">
 <title>叕中啦 · 足球数据中心</title>
 <link rel="stylesheet" href="assets/css/site.css" data-page-node-id="uUmFiPJ0p5EW0uNkQxRRHg">
 </head>
 <body data-page-node-id="enuNzSiK9KAh7jcKH8v7DD">
 <div id="siteNav" data-page-node-id="gRwN08yKjnQuXSoOKNmMaV"></div>
-<script>window.SITE_ROOT='';</script>
+<script>window.SITE_ROOT='';window.SITE_NO_SEL=true; /* 首页去掉页头下拉（统计主题/联赛层级/范围），只留主题按钮 */</script>
 <script src="assets/js/site.js"></script>
 
 <div class="home" data-page-node-id="FuEG4AGClxRp4DGa1XQ43v">
   <div class="home-hero" data-page-node-id="nxftpd5ML5tpbiBEskdBQh">
     <h1 data-page-node-id="Ll070t7ZZfCmAZwvGfiCiX"><span class="plain" data-page-node-id="MHz43Ao7TbXpFiJloGnLIE">叕中啦 ·</span> 足球数据中心</h1>
     <p data-page-node-id="NZULcHu2cUWr11BvUJ1Knr">汇总 欧洲五大联赛（英超 / 西甲 / 德甲 / 意甲 / 法甲）与 五大次级联赛（英冠 / 西乙 / 德乙 / 法乙 / 意乙）
-       近五个赛季的赛果统计：单场总进球数分布、平局率、比分分布、各轮走势与各队表现。
-       顶部可自由切换「统计主题」与「联赛层级」。</p>
+       近五个赛季的赛果统计：单场总进球数分布、平局率、比分分布、各轮走势与各队表现。</p>
   </div>
 
   <div class="home-grid" id="homeCards" data-page-node-id="WxdpA1CWpYzK434iR58QPe"></div>
 
-  <div class="home-note" data-page-node-id="tQ4Lbvcv6kCoW27anz2cgH">
-    数据源：<a href="https://github.com/openfootball/football.json" target="_blank" rel="noopener" data-page-node-id="A1wTp6q3bo9QX6Tb1f26y9">openfootball/football.json</a>、
-    <a href="https://www.football-data.co.uk/data.php" target="_blank" rel="noopener" data-page-node-id="R4kRjwWU6b09kPWliOI0nj">Football-Data.co.uk</a>；队徽来源 Wikipedia。<br data-page-node-id="XGvFT0abLPhk4p2fQZpRui">
-    各页页脚标注了「数据源更新时间」与「本页更新时间」，以页面内标注为准。<br data-page-node-id="jhblVcqERnZSXzDLcMg0N4">
-    新增页面：编辑 <code data-page-node-id="CxuAjyqSUtIYZ8zLCPLbmH">assets/js/site.js</code> 顶部的 <code data-page-node-id="D9sfxDXDA5k7fLYLEMi9Ag">SITE_NAV</code> 配置即可，导航与首页卡片会自动同步。
+  <!-- 新增页面：编辑 assets/js/site.js 顶部的 SITE_NAV 配置即可，导航与首页卡片会自动同步。
+       （原为页脚可见文案，现移入注释，让页脚与各统计页一样单行、位置统一） -->
+  <div class="home-footer" data-page-node-id="tQ4Lbvcv6kCoW27anz2cgH">
+    <span class="ft-brand" data-page-node-id="Msnurd75m5scSgFJqf2KIq">叕中啦</span> · 足球数据中心　｜　数据源：<a href="https://github.com/openfootball/football.json" target="_blank" rel="noopener" data-page-node-id="A1wTp6q3bo9QX6Tb1f26y9">openfootball/football.json</a>、<a href="https://www.football-data.co.uk/data.php" target="_blank" rel="noopener" data-page-node-id="R4kRjwWU6b09kPWliOI0nj">Football-Data.co.uk</a>；队徽来源 Wikipedia
   </div>
 </div>
 
@@ -36,15 +42,36 @@
   var NAV = window.SITE_NAV || [], url = window.SITE_PAGE_URL || function(f){ return 'pages/'+f; };
   var box = document.getElementById('homeCards');
   if(!box) return;
+  // 卡片图标（14px，嵌在「统计类型」标签里）：平局统计→蓝色握手，进球数统计→经典足球。
+  // 彩色实心小图标；不再是铺满整卡的大底纹，避免抢正文。
+  var ART_SVG = {
+    'draws':"<svg class=\"tag-ic blue\" viewBox=\"0 -960 960 960\" aria-hidden=\"true\"><path d=\"M475-160q4 0 8-2t6-4l328-328q12-12 17.5-27t5.5-30q0-16-5.5-30.5T817-607L647-777q-11-12-25.5-17.5T591-800q-15 0-30 5.5T534-777l-11 11 74 75q15 14 22 32t7 38q0 42-28.5 70.5T527-522q-20 0-38.5-7T456-550l-75-74-175 175q-3 3-4.5 6.5T200-435q0 8 6 14.5t14 6.5q4 0 8-2t6-4l136-136 56 56-135 136q-3 3-4.5 6.5T285-350q0 8 6 14t14 6q4 0 8-2t6-4l136-135 56 56-135 136q-3 2-4.5 6t-1.5 8q0 8 6 14t14 6q4 0 7.5-1.5t6.5-4.5l136-135 56 56-136 136q-3 3-4.5 6.5T454-180q0 8 6.5 14t14.5 6Zm-1 80q-37 0-65.5-24.5T375-166q-34-5-57-28t-28-57q-34-5-56.5-28.5T206-336q-38-5-62-33t-24-66q0-20 7.5-38.5T149-506l232-231 131 131q2 3 6 4.5t8 1.5q9 0 15-5.5t6-14.5q0-4-1.5-8t-4.5-6L398-777q-11-12-25.5-17.5T342-800q-15 0-30 5.5T285-777L144-635q-9 9-15 21t-8 24q-2 12 0 24.5t8 23.5l-58 58q-17-23-25-50.5T40-590q2-28 14-54.5T87-692l141-141q24-23 53.5-35t60.5-12q31 0 60.5 12t52.5 35l11 11 11-11q24-23 53.5-35t60.5-12q31 0 60.5 12t52.5 35l169 169q23 23 35 53t12 61q0 31-12 60.5T873-437L545-110q-14 14-32.5 22T474-80Zm-99-560Z\"/></svg>",
+    'goals':'<svg class="tag-ic" viewBox="0 0 24 24" aria-hidden="true">'
+      + '<circle cx="12" cy="12" r="9.2" fill="#f0a04b"/>'
+      + '<path d="M12 8.8 15.04 11.01 13.88 14.59 10.12 14.59 8.96 11.01Z" fill="#8c4a12"/>'
+      + '<g fill="none" stroke="#8c4a12" stroke-width="1.15" stroke-linecap="round">'
+      + '<path d="M12 8.8V3"/><path d="M15.04 11.01 20.56 9.22"/>'
+      + '<path d="M13.88 14.59 17.29 19.28"/><path d="M10.12 14.59 6.71 19.28"/>'
+      + '<path d="M8.96 11.01 3.44 9.22"/></g>'
+      + '<circle cx="12" cy="12" r="9.2" fill="none" stroke="#8c4a12" stroke-width="1.2"/>'
+      + '</svg>'
+  };
   var h = '';
   NAV.forEach(function(gp){
+    var art = ART_SVG[gp.id] || '';
     gp.items.forEach(function(it){
-      h += '<a class="home-card" href="'+url(it.file)+'">'
-         + '<span class="tag'+(it.ready?'':' wait')+'">'+gp.label+'</span>'
+      var cls = 'home-card'+(it.ready?'':' disabled wait');
+      if(it.ready){
+        h += '<a class="'+cls+'" href="'+url(it.file)+'">';
+      } else {
+        // 敬请期待：用 <div>（非 <a>）+ aria-disabled，真正不可点击、灰态
+        h += '<div class="'+cls+'" role="link" aria-disabled="true" tabindex="-1">';
+      }
+      h += '<span class="tag'+(it.ready?'':' wait')+'">'+art+gp.label+'</span>'
          + '<h3>'+it.label+(it.ready?'':' · 敬请期待')+'</h3>'
          + '<div class="d">'+it.desc+'</div>'
          + '<div class="go">'+(it.ready?'进入查看 →':'敬请期待')+'</div>'
-         + '</a>';
+         + (it.ready?'</a>':'</div>');
     });
   });
   box.innerHTML = h;

@@ -50,6 +50,7 @@
   window.SITE_PAGE_URL = function (f) { return (window.SITE_ROOT || '') + 'pages/' + f; };
 
   var ROOT = window.SITE_ROOT || '';         // 根目录页为 ''；pages/ 下的页为 '../'
+  var NO_SEL = !!window.SITE_NO_SEL;          // 首页：去掉顶部 3 个下拉（统计主题/联赛层级/范围）
   var BRAND_SVG =
     '<svg class="mark" viewBox="0 0 40 40" aria-hidden="true">' +
     '<defs><linearGradient id="siteGrad" x1="0" y1="0" x2="1" y2="1">' +
@@ -113,14 +114,16 @@
   top.innerHTML =
     '<div class="site-top-in">' +
       '<div class="site-top-row">' +
-        '<a class="site-brand" href="' + ROOT + 'index.html" title="叕中啦 · 足球数据中心">' + BRAND_SVG +
+        '<a class="site-brand" href="' + ROOT + 'index.html" aria-label="叕中啦 · 足球数据中心">' + BRAND_SVG +
           '<span class="nm">叕中啦</span></a>' +
         '<div class="site-center" id="siteCenter"></div>' +
         '<div class="site-right">' +
-          selHtml('g', groupOpts, groupIdx) +
-          selHtml('l', levelOpts, itemIdx) +
-          selEmptyHtml('w', '近五季') +     /* 范围下拉：adopt() 时根据 #winSwitch 重写 */
-          '<button type="button" class="theme-btn" id="siteThemeBtn" title="切换主题" aria-label="切换主题">🌗</button>' +
+          (NO_SEL ? '' :
+            selHtml('g', groupOpts, groupIdx) +
+            selHtml('l', levelOpts, itemIdx) +
+            selEmptyHtml('w', '近五季')     /* 数据页才需要：范围下拉 adopt() 时按 #winSwitch 重写 */
+          ) +
+          '<button type="button" class="theme-btn" id="siteThemeBtn" aria-label="切换主题">🌗</button>' +
         '</div>' +
       '</div>' +
       '<div class="site-top-sub" id="siteSub"></div>' +
@@ -232,9 +235,9 @@
     var v = document.getElementById('bootVeil');
     if (!v) return;
     var now = (window.performance && performance.now) ? performance.now() : Date.now();
-    // 骨架是延迟 0.2s 才淡入的：还没露脸就直接摘掉，避免「闪一下骨架」；
+    // 骨架块是延迟 0.25s 才淡入的：还没露脸就直接摘掉整块遮罩，避免「闪一下骨架」；
     // 已经露脸了就走淡出动画，别硬切。
-    if (now - bootT0 < 240) { if (v.parentNode) v.parentNode.removeChild(v); return; }
+    if (now - bootT0 < 300) { if (v.parentNode) v.parentNode.removeChild(v); return; }
     v.classList.add('out');
     setTimeout(function () { if (v.parentNode) v.parentNode.removeChild(v); }, 320);
   }
@@ -396,7 +399,6 @@
     else if (mode === 'light') { ico = '☀️'; tip = '固定浅色（点击切换）'; }
     else                      { ico = '🌙'; tip = '固定深色（点击切换）'; }
     b.textContent = ico;
-    b.title = tip;
     b.setAttribute('aria-label', tip);
   }
   function shellApply(mode) {

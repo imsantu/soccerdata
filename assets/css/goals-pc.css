@@ -158,6 +158,7 @@ td.col-sel .bar { background:var(--accent); }
 .trend-tip { position:fixed; z-index:60; pointer-events:none; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:12px; line-height:1.5; padding:8px 10px; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.25); display:none; white-space:nowrap; }
 .trend-tip b { color:var(--text-strong); }
 .footer { text-align:center; padding:18px; color:var(--muted); font-size:12px; margin-top:18px; }
+.footer b { color:var(--text-dim); font-weight:700; }
 /* 走势总览（五联赛汇总）：每张图配联赛小标题 */
 .t-chart-title { font-size:14px; font-weight:700; color:var(--text-strong); margin:4px 0 8px; }
 /* 英超 2/3 球走势面板 */

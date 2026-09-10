@@ -14,6 +14,19 @@ SITE="/Users/santu/soccerdata/football-data-site"
 AUTO="$SITE/tools"
 PY="/usr/bin/python3"
 
+# 0) 路径护栏：站点必须位于 ~/soccerdata，绝不允许落在桌面。
+#    历史事故：站点曾放在 ~/Desktop/soccerdata，迁移后 launchd 仍指向旧路径，
+#    导致桌面上被反复重建出 soccerdata 目录。这里主动兜底。
+DESKTOP_DIR="${HOME:-/Users/santu}/Desktop"
+case "$SITE" in
+    "$DESKTOP_DIR"/*|"$DESKTOP_DIR")
+        echo "[FAIL] 站点路径位于桌面（$SITE），已中止，避免在桌面产生任何内容"
+        exit 1 ;;
+esac
+if [ -e "$DESKTOP_DIR/soccerdata" ]; then
+    echo "[WARN] 检测到残留目录 $DESKTOP_DIR/soccerdata，疑似旧路径遗留，请确认后删除"
+fi
+
 mkdir -p "$AUTO/logs" "$AUTO/backups"
 LOG="$AUTO/logs/$(date '+%Y-%m-%d_%H%M%S').log"
 exec > >(tee -a "$LOG") 2>&1

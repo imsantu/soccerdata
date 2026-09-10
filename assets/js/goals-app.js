@@ -138,6 +138,16 @@ window.BUCKETS = window.DATA.buckets;
     document.addEventListener('mouseout',hide);
   })();
 
+    // 页脚：填入「数据源更新时间」与「本页更新时间」（来自数据层 meta，与平局页一致）
+    (function(){
+      try{
+        var m = (window.DATA && window.DATA.meta) || {};
+        var s = document.getElementById('ftSrc'), g = document.getElementById('ftGen');
+        if(s) s.textContent = m.srcUpdated || '–';
+        if(g) g.textContent = m.generated || '–';
+      }catch(e){}
+    })();
+
     // 版本脚本已加载并执行过 render()，真实内容就位 —— 通知外壳把首屏骨架淡出
     try{ if(window.QZL_BOOT_DONE) window.QZL_BOOT_DONE(); }catch(e){}
   }

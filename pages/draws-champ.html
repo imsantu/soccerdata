@@ -4,13 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1117">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1117">
+<!-- 首帧前定主题（消除刷新 / 切页闪黑，详见 index.html 同名注释） -->
+<script>(function(){try{var m=null,k=['qzl_theme','fbg_theme'];for(var i=0;i<k.length;i++){try{m=localStorage.getItem(k[i]);}catch(e){}if(m)break;}if(m!=='auto'&&m!=='light'&&m!=='dark')m='auto';var t=m;if(m==='auto'){var hh=new Date().getHours();t=(hh>=6&&hh<18)?'light':'dark';if(window.matchMedia){if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark';else if(matchMedia('(prefers-color-scheme: light)').matches)t='light';}}var r=document.documentElement;r.setAttribute('data-theme',t);r.style.colorScheme=t;var mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.setAttribute('content',t==='dark'?'#0f1117':'#eef1f6');}catch(e){}})();</script>
 <meta name="description" content="叕中啦 · 五大次级联赛（英冠/西乙/德乙/法乙/意乙）近五赛季平局数据专题：平局率、比分分布、各轮走势与各队平局统计。">
 <title>叕中啦 · 五大次级联赛近五赛季平局数据（英冠/西乙/德乙/法乙/意乙）</title>
 <link rel="stylesheet" href="../assets/css/draws-champ.css">
 <link rel="stylesheet" href="../assets/css/site.css">
 <style id="bootCss">
-#bootVeil{position:fixed;inset:0;z-index:150;background:var(--bg,#0f1117);opacity:0;
-  animation:bvIn .22s ease .2s forwards;pointer-events:none;overflow:hidden;}
+/* 遮罩首帧就是不透明的页面底色（与页面背景同色，所以看不出「多了一层」）；
+   骨架块延迟 0.25s 才淡入 —— 加载快的页面根本看不到骨架，也就不会「闪一下」。 */
+#bootVeil{position:fixed;inset:0;z-index:150;background:var(--bg,#0f1117);pointer-events:none;overflow:hidden;}
+#bootVeil .bv-wrap{opacity:0;animation:bvIn .22s ease .25s forwards;}
 @keyframes bvIn{to{opacity:1;}}
 #bootVeil.out{animation:bvOut .28s ease forwards;}
 @keyframes bvOut{from{opacity:1;}to{opacity:0;}}
@@ -68,8 +74,8 @@
   <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌗 自动</button>
 </header>
 <div class="scroll-nav">
-  <button class="scroll-btn" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到页头"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
-  <button class="scroll-btn" id="toBottom" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})" title="回到页脚"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></button>
+  <button class="scroll-btn" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到页头"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+  <button class="scroll-btn" id="toBottom" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})" aria-label="回到页脚"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg></button>
 </div>
 
 <div class="container">
@@ -152,16 +158,10 @@
   </div>
 
   <div class="footer">
-    <div><span class="ft-brand">叕中啦</span> · 五大次级联赛平局数据站　｜　数据源：<a href="https://github.com/openfootball" target="_blank">openfootball</a>（football.json 与各联赛国别仓库）</div>
-    <div class="ft-meta">
-      <span title="原始赛果文件最近一次抓取落盘的时间">数据源更新 <b id="ftSrc">–</b></span>
-      <span class="ft-dot">·</span>
-      <span title="本页最近一次重新生成的时间">本页更新 <b id="ftGen">–</b></span>
-      <span class="ft-dot">·</span>
-      <!-- 自动化任务标识已停用（原：由本机定时任务每日 09:00 拉取赛果并重新生成本页）。
-           后续重建自动化任务时，把下面这段注释解开即可：
-           <span class="ft-auto" title="由定时任务每日 09:00 拉取赛果并重新生成本页"><svg .../>每日 09:00 自动更新</span> -->
-    </div>
+    <span class="ft-brand">叕中啦</span> · 五大次级联赛平局数据站　｜　数据源：<a href="https://github.com/openfootball" target="_blank">openfootball</a>（football.json 与各联赛国别仓库）　｜　<span>数据源更新 <b id="ftSrc">–</b></span>　｜　<span>本页更新 <b id="ftGen">–</b></span>
+    <!-- 自动化任务标识已停用（原：由本机定时任务每日 09:00 拉取赛果并重新生成本页）。
+         后续重建自动化任务时，把下面这段注释解开即可：
+         <span class="ft-auto"><svg .../>每日 09:00 自动更新</span> -->
   </div>
 </div>
 

@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1117">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1117">
+<!-- 首帧前定主题（消除刷新 / 切页闪黑，详见 index.html 同名注释） -->
+<script>(function(){try{var m=null,k=['qzl_theme','fbg_theme'];for(var i=0;i<k.length;i++){try{m=localStorage.getItem(k[i]);}catch(e){}if(m)break;}if(m!=='auto'&&m!=='light'&&m!=='dark')m='auto';var t=m;if(m==='auto'){var hh=new Date().getHours();t=(hh>=6&&hh<18)?'light':'dark';if(window.matchMedia){if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark';else if(matchMedia('(prefers-color-scheme: light)').matches)t='light';}}var r=document.documentElement;r.setAttribute('data-theme',t);r.style.colorScheme=t;var mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.setAttribute('content',t==='dark'?'#0f1117':'#eef1f6');}catch(e){}})();</script>
 <meta name="description" content="叕中啦 · 五大次级联赛（英冠/西乙/德乙/法乙/意乙）进球数统计，数据接入中。">
 <title>叕中啦 · 次级联赛进球数统计（敬请期待）</title>
 <link rel="stylesheet" href="../assets/css/site.css">

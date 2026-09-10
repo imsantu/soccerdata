@@ -26,9 +26,9 @@ function sysTheme(){
 }
 function refreshThemeBtn(mode, actual){
   const b = document.getElementById('themeBtn'); if(!b) return;
-  if(mode === 'auto'){ b.textContent = (actual === 'dark' ? '🌗 自动·深色' : '🌗 自动·浅色'); b.title = '自动跟随系统外观（点击切换）'; }
-  else if(mode === 'light'){ b.textContent = '☀️ 浅色'; b.title = '固定浅色（点击切换）'; }
-  else { b.textContent = '🌙 深色'; b.title = '固定深色（点击切换）'; }
+  if(mode === 'auto'){ b.textContent = (actual === 'dark' ? '🌗 自动·深色' : '🌗 自动·浅色'); }
+  else if(mode === 'light'){ b.textContent = '☀️ 浅色'; }
+  else { b.textContent = '🌙 深色'; }
 }
 // 模式以内存变量为准（localStorage 只是持久化；file://、隐私模式、jsdom 下可能不可用）
 let themeMode = 'auto';
@@ -106,12 +106,12 @@ function buildLeagueTabs(){
   const lg = DATA.leagues.map(l=>{
     const cr = (CMP().rows.find(r=>r.code===l.code)||{});
     const s0 = l.seasons[winSeq()[0]];
-    return '<div class="league-tab'+(l.code===curLeague && !showBig5?' active':'')+'" data-k="'+l.code+'" title="'+l.name+'：'+fmtSeason(winSeq()[0])+' 平局 '+s0.totalDraws+' 场，平局率 '+s0.drawRate+'%">'+
+    return '<div class="league-tab'+(l.code===curLeague && !showBig5?' active':'')+'" data-k="'+l.code+'">'+
       '<img src="'+lgLogo(l.code)+'" alt="'+l.cn+'">'+l.cn+
       '<span class="rt">'+(cr.drawRate!=null?cr.drawRate:'–')+'%</span></div>';
   }).join('');
   // 模块六：五大联赛横向对照，作为第 6 个一级 Tab，放在「法甲」之后
-  const big5 = '<div class="league-tab big5'+(showBig5?' active':'')+'" data-k="__big5__" title="五大联赛（欧足联 UEFA Big-5）'+WLAB()+'平局横向对照（模块六）：跨联赛的总平局、平局率与比分结构"><svg class="uefa-logo" viewBox="0 0 30 18" aria-label="UEFA"><rect x="0" y="0" width="30" height="18" rx="3" fill="#0a1f44"/><text x="15" y="12.5" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="800" fill="#fff" text-anchor="middle" letter-spacing="0.5">UEFA</text></svg>五大联赛<span class="rt">对照</span></div>';
+  const big5 = '<div class="league-tab big5'+(showBig5?' active':'')+'" data-k="__big5__"><svg class="uefa-logo" viewBox="0 0 30 18" aria-label="UEFA"><rect x="0" y="0" width="30" height="18" rx="3" fill="#0a1f44"/><text x="15" y="12.5" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="800" fill="#fff" text-anchor="middle" letter-spacing="0.5">UEFA</text></svg>五大联赛<span class="rt">对照</span></div>';
   el.innerHTML = lg + big5;
   el.querySelectorAll('.league-tab').forEach(b=>{
     b.onclick = ()=>{
@@ -132,10 +132,10 @@ function buildSeasonTabs(){
   // 跨赛季口径（总览页）一直跟着 winSeq() 走，这一步把单联赛视图下的 tab 也接上，避免「
   // 切到近三季后，赛季栏还出现被裁掉的旧年份按钮」的不一致。
   const ws = DATA.seasonOrder.filter(k => k === '2026-27' || winSeq().indexOf(k) >= 0);
-  const ov = '<div class="season-tab ov'+(curView==='overview' && !showBig5?' active':'')+'" data-k="__overview__" title="赛季总览：跨赛季总览（模块四 / 五），口径随右侧「近五季 / 近三季」切换">赛季总览</div>';
+  const ov = '<div class="season-tab ov'+(curView==='overview' && !showBig5?' active':'')+'" data-k="__overview__">赛季总览</div>';
   const seas = ws.map(k=>{
     const s = LG().seasons[k];
-    return '<div class="season-tab'+(k===currentSeason && curView!=='overview' && !showBig5?' active':'')+'" data-k="'+k+'" title="'+LG().cn+' '+fmtSeason(k)+' 赛季：'+s.totalMatches+' 场中 '+s.totalDraws+' 场平局，平局率 '+s.drawRate+'%">'+fmtSeason(k)+'<span class="cnt">'+s.totalDraws+'场</span></div>';
+    return '<div class="season-tab'+(k===currentSeason && curView!=='overview' && !showBig5?' active':'')+'" data-k="'+k+'">'+fmtSeason(k)+'<span class="cnt">'+s.totalDraws+'场</span></div>';
   }).join('');
   el.innerHTML = seas + ov;   // 总览 Tab 放到赛季 Tab 最后
   buildWinSwitch();
@@ -157,9 +157,9 @@ function buildWinSwitch(){
   if(!el) return;
   const seq = winSeq(), last = fmtSeason(seq[seq.length-1]), first = fmtSeason(seq[0]);
   const opt = (n, label) => '<button type="button" class="wbtn'+(SEASON_WIN===n?' on':'')+'" data-win="'+n+
-    '" title="跨赛季统计口径切换为最近 '+n+' 个赛季（'+last+' → '+first+'）">'+label+'</button>';
+    '">'+label+'</button>';
   el.innerHTML =
-    '<span class="wlab" title="跨赛季统计的赛季范围"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>范围</span>'+
+    '<span class="wlab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>范围</span>'+
     opt(5,'近五季') + opt(3,'近三季');
   el.querySelectorAll('[data-win]').forEach(b=>{
     b.onclick = ()=> setWin(+b.getAttribute('data-win'));
@@ -172,7 +172,7 @@ function crestImg(name){
   const init = name.replace(/[^A-Za-z ]/g,'').split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase();
   return '<span class="crest-fallback" style="background:#4a9eff">'+init+'</span>';
 }
-const CHAMP_SVG = '<span class="champ" title="当季冠军"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>';
+const CHAMP_SVG = '<span class="champ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>';
 
 /* ---------------- 比分明细折叠：默认收起，hover 浮层查看 ----------------
    队表四列比分（0-0/1-1/2-2/其他）默认收起以保持整洁；点「展开比分明细」按钮可展开为四列。
@@ -205,8 +205,6 @@ function syncBkBtns(){
     const txt = on ? '收起比分明细' : '展开比分明细（0-0 / 1-1 / 2-2 / 其他）';
     b.innerHTML = (on?ICO_HIDE:ICO_SHOW)+'<span>'+txt+'</span>';
     b.className = 'ttbtn'+(on?' on':'');
-    b.title = on ? '点击隐藏 0-0 / 1-1 / 2-2 / 其他 四列，表格更紧凑'
-                 : '点击显示 0-0 / 1-1 / 2-2 / 其他 四列';
   });
 }
 function bindBkToggle(){
@@ -336,9 +334,9 @@ function yrCell(t){
   const mx = Math.max(...t.per.filter(x=>x!==null && x!==undefined), 1);
   return '<span class="yrcell">'+seqRev.map(s=>{
     const v = t.per[idxOf(s)];
-    if(v===null || v===undefined) return '<i class="na" title="'+fmtSeason(s)+' 赛季未征战'+LG().cn+'">–</i>';
+    if(v===null || v===undefined) return '<i class="na">–</i>';
     const a = (0.10 + 0.70*(v/mx)).toFixed(3);
-    return '<i class="'+(s===currentSeason?'cur':'')+'" style="background:rgba(74,158,255,'+a+')" title="'+fmtSeason(s)+'：'+v+' 场平局">'+v+'</i>';
+    return '<i class="'+(s===currentSeason?'cur':'')+'" style="background:rgba(74,158,255,'+a+')">'+v+'</i>';
   }).join('')+'</span>';
 }
 function sdColor(v){ return v<=1 ? 'var(--green)' : (v<=2 ? 'var(--accent)' : '#e17055'); }
@@ -371,9 +369,9 @@ function renderTop(){
   let head = '<thead><tr>'+cols.map(c=>{
     if(c.namecol) return '<th class="namecol left">'+c.label+'</th>';
     if(c.yrcol){ const seqRev=CR().seasonSeq.slice().reverse();
-      return '<th class="yr yrcol" title="最新赛季在左，从左到右为 '+seqRev.map(fmtSeason).join(' → ')+'">'+c.label+'</th>'; }
+      return '<th class="yr yrcol">'+c.label+'</th>'; }
     const arr = topSort.key===c.key?(topSort.dir<0?'▼':'▲'):'';
-    const tip = c.title ? ' title="'+c.title+'"' : '';
+    const tip = '';
     return '<th class="'+vcol(c).trim()+(c.totalcol?' totalcol':'')+'" data-k="'+c.key+'"'+tip+'><span class="arr">'+arr+'</span>'+c.label+'</th>';
   }).join('')+'</tr></thead>';
 
@@ -477,7 +475,7 @@ function renderTopTools(){
   const item = (id, label) =>
     '<button type="button" class="fb'+(topFilter[id]?' on':'')+'" data-f="'+id+'">'+label+'</button>';
   document.getElementById('topGroups').innerHTML =
-    '<span class="tg"><i class="tgl">范围</i><span class="seg" title="按「总平局」取前 10 名作为固定候选范围；筛选只在此范围内做减法，不会从 10 名外补数据">'+
+    '<span class="tg"><i class="tgl">范围</i><span class="seg">'+
       seg(10,'前 10 名') + seg(0,'全部球队') + '</span></span>'+
     '<span class="tg"><i class="tgl">筛选</i>'+
       item('full', WN()+'季全勤') + item('stab2','稳定度≤2') + item('rateHi','平局率≥25%') + '</span>';
@@ -527,8 +525,8 @@ function renderStats(){
     {v:maxStreak+' / '+maxGap, k:'最长连平 / 最长无平局间隔', cls:'rk', t:'全联盟单季最长连平轮数 / 最长无平局轮数'},
   ];
   document.getElementById('statGrid').innerHTML = cards.map(c=>
-    '<div class="stat"><div class="k" title="'+c.t+'">'+c.k+'</div>'+
-    (c.team ? '<div class="v '+c.cls+' stat-combo" title="'+c.t+'"><b>'+c.v+'</b><span class="stat-team mini-tip" data-tip="'+c.team+'：'+c.v+' 场平局">'+c.team+'</span></div>' : '<div class="v '+c.cls+'" title="'+c.t+'">'+c.v+'</div>')+'</div>').join('');
+    '<div class="stat"><div class="k">'+c.k+'</div>'+
+    (c.team ? '<div class="v '+c.cls+' stat-combo"><b>'+c.v+'</b><span class="stat-team mini-tip" data-tip="'+c.team+'：'+c.v+' 场平局">'+c.team+'</span></div>' : '<div class="v '+c.cls+'">'+c.v+'</div>')+'</div>').join('');
   bindMiniTips(Array.from(document.querySelectorAll('#statGrid .mini-tip')));
 }
 
@@ -646,12 +644,12 @@ function renderTeams(){
         // 只在「下赛季名单已裁定」的赛季显示升降 icon：进行中的赛季不做任何升降级判定
         let mark='';
         if(moveFinal){
-          if(t.promo) mark+='<span class="move up" title="升班马（本季新升入）">升</span>';
-          if(t.releg) mark+='<span class="move down" title="降班马（本季结束后降级）">降</span>';
+          if(t.promo) mark+='<span class="move up">升</span>';
+          if(t.releg) mark+='<span class="move down">降</span>';
         }
         cells+='<td class="namecol left"><div class="tcell">'+crestImg(t.name)+
           '<span class="tmeta"><span class="nm">'+t.cn+'</span>'+
-          '<span class="tagroup"><span class="pts-inline" title="当季积分">'+t.pts+'<span class="u">分</span></span>'+
+          '<span class="tagroup"><span class="pts-inline">'+t.pts+'<span class="u">分</span></span>'+
           ((t.rank===1&&moveFinal)?CHAMP_SVG:'')+mark+'</span></span></div></td>';
       } else if(c.evcol){
         const v=t[c.key];
@@ -693,6 +691,24 @@ function renderTeams(){
 let form5Show = {W:false, D:true, L:false};
 let form5Off = {};                        // 队名 → true 表示隐藏该行色块
 const RS = {W:'胜', D:'平', L:'负'};
+/* 主客场筛选：默认「全部」，可只看主场 / 只看客场。
+   每场的 H / A 取自 formDetail[i] 的第 3 段（"轮次|日期|H或A|对手序号|比分"）；
+   数据里主客场各占一半、与赛果逐场对齐，所以能直接按位过滤。 */
+let form5HA = 'all';                       // 'all' | 'H' | 'A'
+const HA_LAB = {all:'全部', H:'主场', A:'客场'};
+const HA_TIP = {all:'全部比赛（主场 + 客场）', H:'只看该队主场的比赛', A:'只看该队客场的比赛'};
+function form5HAOf(t, i){
+  const raw = (t.formDetail||[])[i];
+  if(!raw) return '';
+  const ha = String(raw).split('|')[2];
+  return (ha === 'H' || ha === 'A') ? ha : '';
+}
+function form5HAHTML(){
+  return '<span class="ha-switch" role="group" aria-label="主客场筛选">' +
+    ['all','H','A'].map(v => '<button type="button" class="habtn' + (form5HA===v?' on':'') +
+      '" data-ha="' + v + '">' + HA_LAB[v] + '</button>').join('') +
+    '</span>';
+}
 function form5Rows(){
   // 严格按当季最终积分榜名次（冠军 → 垫底）排列，与上方「各队平局统计」口径一致
   return (LG().seasons[currentSeason].teams || []).slice().sort((a,b)=>
@@ -748,14 +764,25 @@ function renderForm5(){
   const ROSTER = season.teams || [];
   title.textContent=fmtSeason(currentSeason)+' '+LG().cn+'各队胜平负走势分布';
   note.innerHTML='按当季积分榜名次自上而下排列；每一格为一场常规赛（升降级附加赛不计入），'+
-    '绿＝胜、蓝＝平、红＝负，默认只突出平局；鼠标悬停任意色块可看该场日期、对手与比分，点队名后的「隐藏 / 显示」可收起或展开该队整行数据（色带与胜负统计）。';
-  filter.innerHTML=['W','D','L'].map(k=>'<button type="button" class="form5-toggle'+(form5Show[k]?' on':'')+'" data-r="'+k+'">'+RS[k]+'</button>').join('');
+    '绿＝胜、蓝＝平、红＝负，默认只突出平局；最右侧的「主客场」可切到只看主场或只看客场，'+
+    '行末的胜 / 平 / 负场次会跟着一起重算；鼠标悬停任意色块可看该场日期、对手与比分，点队名后的「隐藏 / 显示」可收起或展开该队整行数据（色带与胜负统计）。';
+  filter.innerHTML=['W','D','L'].map(k=>'<button type="button" class="form5-toggle'+(form5Show[k]?' on':'')+'" data-r="'+k+'">'+RS[k]+'</button>').join('')+form5HAHTML();
   filter.querySelectorAll('.form5-toggle').forEach(btn=>btn.onclick=()=>{ const k=btn.dataset.r; form5Show[k]=!form5Show[k]; renderForm5(); });
+  filter.querySelectorAll('.habtn').forEach(btn=>btn.onclick=()=>{ form5HA=btn.getAttribute('data-ha'); renderForm5(); });
   const rows=form5Rows();
   const legend='<div class="form5-legend"><span class="fw">胜</span><span class="fd">平</span><span class="fl">负</span></div>';
   box.innerHTML=legend+rows.map(t=>{
-    const seq=t.formSeq||[], counts=t.formCounts||{};
+    const seq=t.formSeq||[];
+    // 先按主客场挑出要保留的场次，再据保留下来的场次重算胜 / 平 / 负 ——
+    // 保证「行末统计」与「色带内容」永远一致（原来直接读 t.formCounts，筛完就对不上了）。
+    const keep=[]; const counts={W:0,D:0,L:0};
+    for(let i=0;i<seq.length;i++){
+      const ok = (form5HA==='all') || (form5HAOf(t,i)===form5HA);
+      keep.push(ok);
+      if(ok && (seq[i]==='W'||seq[i]==='D'||seq[i]==='L')) counts[seq[i]]++;
+    }
     const cells=seq.map((v,i)=>{
+      if(!keep[i]) return '';
       const s0=form5SeasonAt(t,i), prev=i?form5SeasonAt(t,i-1):'';
       const start=(i>0&&s0!==prev)?' start':'';
       return '<i class="form5-cell '+v.toLowerCase()+start+(form5Show[v]?'':' off')+'" data-tip="'+form5TipHTML(t, ROSTER, i).replace(/"/g,'&quot;')+'"></i>';
@@ -826,7 +853,7 @@ function renderCompare(){
     '<th class="left">最多平局</th><th class="left">最长连平</th><th class="left">最长无平局间隔</th></tr></thead>';
   const body = '<tbody>'+rows.map(r=>{
     return '<tr'+(r.k===currentSeason?' class="cur"':'')+'>'+
-      '<td class="left"><span class="sn" data-k="'+r.k+'" title="点击查看该赛季">'+fmtSeason(r.k)+'</span></td>'+
+      '<td class="left"><span class="sn" data-k="'+r.k+'">'+fmtSeason(r.k)+'</span></td>'+
       '<td class="bignum">'+r.totalDraws+'</td><td style="font-weight:700;color:var(--green)">'+r.drawRate+'%</td>'+
       '<td>'+r.b00+'</td><td>'+r.b11+'</td><td>'+r.b22+'</td><td>'+r.both+'</td>'+
       '<td class="left">'+r.top+'</td><td class="left">'+r.streak+'</td><td class="left">'+r.gap+'</td></tr>';

@@ -4,13 +4,19 @@
 <meta charset="UTF-8" data-page-node-id="9fSUdAWvU2UBfT5MFV62J3">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" data-page-node-id="dN8Kh18kUV9xndI8mejfSN">
 <meta name="theme-color" content="#0f1117" data-page-node-id="WghBkelbPUv4kxQfyFegV0">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1117">
+<!-- 首帧前定主题（消除刷新 / 切页闪黑，详见 index.html 同名注释） -->
+<script>(function(){try{var m=null,k=['qzl_theme','fbg_theme'];for(var i=0;i<k.length;i++){try{m=localStorage.getItem(k[i]);}catch(e){}if(m)break;}if(m!=='auto'&&m!=='light'&&m!=='dark')m='auto';var t=m;if(m==='auto'){var hh=new Date().getHours();t=(hh>=6&&hh<18)?'light':'dark';if(window.matchMedia){if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark';else if(matchMedia('(prefers-color-scheme: light)').matches)t='light';}}var r=document.documentElement;r.setAttribute('data-theme',t);r.style.colorScheme=t;var mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.setAttribute('content',t==='dark'?'#0f1117':'#eef1f6');}catch(e){}})();</script>
 <meta name="description" content="叕中啦 · 五大联赛（英超/西甲/德甲/意甲/法甲）近五赛季平局数据专题：平局率、比分分布、各轮走势与各队平局统计。" data-page-node-id="8YHou3L16HYseCnjvtxjJT">
 <title>叕中啦 · 五大联赛近五赛季平局数据（英超/西甲/德甲/意甲/法甲）</title>
 <link rel="stylesheet" href="../assets/css/draws-big5.css" data-page-node-id="cWDfdFSJo1VpIclb27H2cD">
 <link rel="stylesheet" href="../assets/css/site.css" data-page-node-id="B6sLiHzCLvlonLuj2nqRFp">
 <style id="bootCss">
-#bootVeil{position:fixed;inset:0;z-index:150;background:var(--bg,#0f1117);opacity:0;
-  animation:bvIn .22s ease .2s forwards;pointer-events:none;overflow:hidden;}
+/* 遮罩首帧就是不透明的页面底色（与页面背景同色，所以看不出「多了一层」）；
+   骨架块延迟 0.25s 才淡入 —— 加载快的页面根本看不到骨架，也就不会「闪一下」。 */
+#bootVeil{position:fixed;inset:0;z-index:150;background:var(--bg,#0f1117);pointer-events:none;overflow:hidden;}
+#bootVeil .bv-wrap{opacity:0;animation:bvIn .22s ease .25s forwards;}
 @keyframes bvIn{to{opacity:1;}}
 #bootVeil.out{animation:bvOut .28s ease forwards;}
 @keyframes bvOut{from{opacity:1;}to{opacity:0;}}
@@ -68,8 +74,8 @@
   <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" data-page-node-id="sJ4ALMEvToaXJRvP0CIgSn">🌗 自动</button>
 </header>
 <div class="scroll-nav" data-page-node-id="FHLBR39nCZT591MZxO5Z7O">
-  <button class="scroll-btn" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到页头" data-page-node-id="h1hqq95IvwGWGkK9vDDxhA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="SgKAWriifYnIoiGO71EODB"><path d="M12 19V5" data-page-node-id="pcEVbM8uqCIEjh31baED4j"/><path d="M6 11l6-6 6 6" data-page-node-id="nDZOE5RisMUk7YWdK7GFEv"/></svg></button>
-  <button class="scroll-btn" id="toBottom" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})" title="回到页脚" data-page-node-id="iVKVvLCsYCg4sU42lH8wqU"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="zi394CEISAgJZgFskefAo2"><path d="M12 5v14" data-page-node-id="CYbZuX4B7dEXewhHhqZoaU"/><path d="M6 13l6 6 6-6" data-page-node-id="a8IIXuN4zeejnfNgYBAhIA"/></svg></button>
+  <button class="scroll-btn" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到页头" data-page-node-id="h1hqq95IvwGWGkK9vDDxhA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="SgKAWriifYnIoiGO71EODB"><path d="M12 19V5" data-page-node-id="pcEVbM8uqCIEjh31baED4j"/><path d="M6 11l6-6 6 6" data-page-node-id="nDZOE5RisMUk7YWdK7GFEv"/></svg></button>
+  <button class="scroll-btn" id="toBottom" onclick="window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})" aria-label="回到页脚" data-page-node-id="iVKVvLCsYCg4sU42lH8wqU"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="zi394CEISAgJZgFskefAo2"><path d="M12 5v14" data-page-node-id="CYbZuX4B7dEXewhHhqZoaU"/><path d="M6 13l6 6 6-6" data-page-node-id="a8IIXuN4zeejnfNgYBAhIA"/></svg></button>
 </div>
 
 <div class="container" data-page-node-id="FdX4ET4nT65COfLGKEemkh">
@@ -152,16 +158,10 @@
   </div>
 
   <div class="footer" data-page-node-id="kfQB76nUdjGB1Hgy129mLR">
-    <div data-page-node-id="kGUyrJTyIiBpHDeomjG5PP"><span class="ft-brand" data-page-node-id="Msnurd75m5scSgFJqf2KIq">叕中啦</span> · 五大联赛平局数据站　｜　数据源：<a href="https://github.com/openfootball/football.json" target="_blank" data-page-node-id="PCiroDoOUBMPK2iGmcH2SC">openfootball/football.json</a></div>
-    <div class="ft-meta" data-page-node-id="hDzMncnya6LEs9dAFQP0wQ">
-      <span title="原始赛果文件最近一次抓取落盘的时间" data-page-node-id="owAHYgb0DbcTjdLpDDgdmG">数据源更新 <b id="ftSrc" data-page-node-id="2uAqEt5v2CipuEFc2IqUop">–</b></span>
-      <span class="ft-dot" data-page-node-id="n2Kr1AqAS7UIRcYuGfCGyd">·</span>
-      <span title="本页最近一次重新生成的时间" data-page-node-id="f6aVYUkDHSgsgLqEWHEtbB">本页更新 <b id="ftGen" data-page-node-id="L965bpQ2LNo5CaEx2YBi6W">–</b></span>
-      <span class="ft-dot" data-page-node-id="ey0i60ihD3BaBeU1fvcF6E">·</span>
-      <!-- 自动化任务标识已停用（原：由本机定时任务每日 09:00 拉取赛果并重新生成本页）。
-           后续重建自动化任务时，把下面这段注释解开即可：
-           <span class="ft-auto" title="由定时任务每日 09:00 拉取赛果并重新生成本页"><svg .../>每日 09:00 自动更新</span> -->
-    </div>
+    <span class="ft-brand" data-page-node-id="Msnurd75m5scSgFJqf2KIq">叕中啦</span> · 五大联赛平局数据站　｜　数据源：<a href="https://github.com/openfootball/football.json" target="_blank" data-page-node-id="PCiroDoOUBMPK2iGmcH2SC">openfootball/football.json</a>　｜　<span data-page-node-id="owAHYgb0DbcTjdLpDDgdmG">数据源更新 <b id="ftSrc" data-page-node-id="2uAqEt5v2CipuEFc2IqUop">–</b></span>　｜　<span data-page-node-id="f6aVYUkDHSgsgLqEWHEtbB">本页更新 <b id="ftGen" data-page-node-id="L965bpQ2LNo5CaEx2YBi6W">–</b></span>
+    <!-- 自动化任务标识已停用（原：由本机定时任务每日 09:00 拉取赛果并重新生成本页）。
+         后续重建自动化任务时，把下面这段注释解开即可：
+         <span class="ft-auto"><svg .../>每日 09:00 自动更新</span> -->
   </div>
 </div>
 

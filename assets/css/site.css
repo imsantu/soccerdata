@@ -31,6 +31,9 @@
   --h-row:64px;
   --h-ctl:36px;
   --r-ctl:10px;
+  color-scheme: dark light;   /* 让浏览器在「首帧/预备绘制」阶段就按系统外观选画布底色，
+                                 消除浅色主题下刷新/跳转先闪一下深色（黑屏）的问题；
+                                 实际主题仍由首帧内联脚本写 data-theme 决定。 */
 }
 [data-theme="light"]{
   --bg:#eef1f6; --card:#ffffff; --card2:#eef1f6; --border:#d8dee9;
@@ -44,15 +47,10 @@
 }
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);}
 
-/* 跨页导航平滑淡入淡出（Chrome 111+ / Safari 18.2+），消除切页硬闪。
-   不支持的浏览器整段忽略，退回原来的直接切换，无副作用。 */
-@view-transition{ navigation:auto; }
-::view-transition-old(root){ animation-duration:.20s; animation-timing-function:ease-out; }
-::view-transition-new(root){ animation-duration:.26s; animation-timing-function:ease-out; }
-/* 尊重系统「减弱动态效果」设置 */
-@media (prefers-reduced-motion:reduce){
-  ::view-transition-old(root),::view-transition-new(root){ animation-duration:.01s; }
-}
+/* 注意：这里曾经挂过 @view-transition{navigation:auto} 做跨页淡入淡出，实测对「闪黑」没有帮助，
+   反而多一层不确定性 —— 已移除。真正的根因是主题由 body 里的 site.js 设置，首帧会先按 :root
+   的深色变量画一帧；现在各页 <head> 都有内联脚本在首帧前写好 data-theme。 */
+
 *{box-sizing:border-box;}                 /* 兜底：首页/占位页没有页面 CSS，避免 .site-top-in 因 content-box 撑出横向滚动 */
 html body{padding-top:0;}                  /* 顶部留白交给外壳的等高占位块 */
 #mount{display:block;}
@@ -90,6 +88,7 @@ body .stickynav.site-moved{display:none !important;}
   backdrop-filter:saturate(160%) blur(10px);
 }
 [data-theme="light"] .site-top{background:rgba(255,255,255,.86);}
+[data-theme="light"] .home-card .tag .tag-ic.blue{color:#2f7bdc;}
 .site-top-spacer{display:block;height:var(--site-top-h,0px);}
 
 /* 铺满浏览器宽度，只在两侧留内边距 */
@@ -270,14 +269,33 @@ body .stickynav.site-moved{display:none !important;}
 .home-card h3{margin:0 0 6px;font-size:16.5px;font-weight:800;color:var(--text-strong);}
 .home-card .d{font-size:12.5px;color:var(--text-muted);line-height:1.7;min-height:42px;}
 .home-card .go{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--accent);}
-.home-note{
-  margin-top:22px;font-size:12px;color:var(--text-muted);line-height:1.9;
-  border-top:1px dashed var(--border); padding-top:14px;
+/* 「敬请期待」卡：灰态、不可点击。底层用 <div role="link" aria-disabled>（不是 <a>），
+   加 .home-card.disabled 拿掉悬浮 / 焦点反馈，避免误导用户去点。 */
+.home-card.disabled{cursor:not-allowed;opacity:.55;filter:grayscale(.45);pointer-events:none;}
+.home-card.disabled:hover{transform:none;border-color:var(--border);box-shadow:none;}
+.home-card.disabled:focus-visible{outline:none;}
+
+/* 首页卡片图标：平局统计=蓝色握手、进球数统计=经典足球。
+   小尺寸、彩色，嵌在「统计类型」标签里（不再做整卡大底纹，避免抢文字）。 */
+.home-card{position:relative;overflow:hidden;}
+.home-card > *{position:relative;z-index:1;}
+.home-card .tag{display:inline-flex;align-items:center;gap:5px;}
+.home-card .tag .tag-ic{width:14px;height:14px;flex:0 0 auto;display:block;}
+.home-card .tag .tag-ic.blue{color:#4a9eff;}
+.home-card .tag .tag-ic.blue path{fill:currentColor;}
+.home-card.disabled .go{color:var(--text-muted);}
+
+/* 首页页脚：与各统计页 .footer 位置 / 版式保持一致，单行居中 */
+.home-footer{
+  text-align:center;padding:20px 12px;margin-top:22px;
+  color:var(--muted);font-size:12px;line-height:1.8;
 }
-.home-note code{
-  background:var(--card2);border:1px solid var(--border);border-radius:5px;
-  padding:1px 6px;font-size:11.5px;color:var(--text-dim);
+.home-footer .ft-brand{color:var(--text-strong);font-weight:800;letter-spacing:1px;}
+.home-footer a{
+  color:var(--text-dim);text-decoration:underline;
+  text-underline-offset:2px;text-decoration-color:var(--border);
 }
+.home-footer a:hover{color:var(--accent);text-decoration-color:var(--accent);}
 
 /* ---------------- 「敬请期待」占位页 ---------------- */
 .soon{ max-width:760px; margin:0 auto; padding:70px 20px; text-align:center; }
@@ -295,3 +313,4 @@ body .stickynav.site-moved{display:none !important;}
 }
 .soon .links a:hover{border-color:var(--accent);}
 .soon .tip{margin-top:26px;font-size:12px;color:var(--text-muted);line-height:1.9;}
+
