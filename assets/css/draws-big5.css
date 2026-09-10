@@ -44,14 +44,14 @@ body { font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-s
 .league-tabs { display:flex; flex-wrap:nowrap; gap:2px; justify-content:center; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; }
 .league-tabs::-webkit-scrollbar { display:none; }
 /* 字号/图标整体放大，未选中也用 text2（比 text-dim 更亮），选中态走高饱和亮色 */
-.league-tab { position:relative; display:inline-flex; align-items:center; gap:9px; padding:15px 22px 13px; background:transparent; border:0; border-radius:11px; color:var(--text2); cursor:pointer; font-size:18px; font-weight:800; letter-spacing:.3px; transition:color .15s,background .15s; user-select:none; white-space:nowrap; min-width:0; flex:0 0 auto; }
+.league-tab { position:relative; display:inline-flex; align-items:center; gap:7px; padding:11px 15px 10px; background:transparent; border:0; border-radius:11px; color:var(--text2); cursor:pointer; font-size:15px; font-weight:800; letter-spacing:.3px; transition:color .15s,background .15s; user-select:none; white-space:nowrap; min-width:0; flex:0 0 auto; }
 /* 选中态用渐变下划线（主站导航栏风格），替代原来抢眼的渐变方块 */
 .league-tab::after { content:''; position:absolute; left:12px; right:12px; bottom:2px; height:3px; border-radius:3px; background:var(--tab-grad); transform:scaleX(0); transform-origin:center; transition:transform .18s ease; }
 .league-tab:hover { color:var(--text-strong); background:var(--card2); }
 .league-tab:hover::after { transform:scaleX(.45); }
 .league-tab.active { color:var(--tab-on); background:var(--tab-on-bg); font-weight:800; }
 .league-tab.active::after { transform:scaleX(1); box-shadow:var(--tab-glow); }
-.league-tab img { width:26px; height:26px; object-fit:contain; border-radius:6px; background:transparent; flex:0 0 auto; }
+.league-tab img { width:22px; height:22px; object-fit:contain; border-radius:6px; background:transparent; flex:0 0 auto; }
 .league-tab .uefa-logo { width:25px; height:15px; border-radius:3px; display:block; flex:0 0 auto; }
 .league-tab .rt { font-size:12px; font-weight:600; opacity:.6; margin-left:2px; }
 .league-tab.active .rt { opacity:.92; }
