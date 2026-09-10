@@ -137,5 +137,8 @@ window.BUCKETS = window.DATA.buckets;
     document.addEventListener('mousemove',move);
     document.addEventListener('mouseout',hide);
   })();
+
+    // 版本脚本已加载并执行过 render()，真实内容就位 —— 通知外壳把首屏骨架淡出
+    try{ if(window.QZL_BOOT_DONE) window.QZL_BOOT_DONE(); }catch(e){}
   }
 })();

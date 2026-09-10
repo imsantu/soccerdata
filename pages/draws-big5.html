@@ -8,8 +8,40 @@
 <title>叕中啦 · 五大联赛近五赛季平局数据（英超/西甲/德甲/意甲/法甲）</title>
 <link rel="stylesheet" href="../assets/css/draws-big5.css" data-page-node-id="cWDfdFSJo1VpIclb27H2cD">
 <link rel="stylesheet" href="../assets/css/site.css" data-page-node-id="B6sLiHzCLvlonLuj2nqRFp">
+<style id="bootCss">
+#bootVeil{position:fixed;inset:0;z-index:150;background:var(--bg,#0f1117);opacity:0;
+  animation:bvIn .22s ease .2s forwards;pointer-events:none;overflow:hidden;}
+@keyframes bvIn{to{opacity:1;}}
+#bootVeil.out{animation:bvOut .28s ease forwards;}
+@keyframes bvOut{from{opacity:1;}to{opacity:0;}}
+[data-theme="light"] #bootVeil{background:#eef1f6;}
+.bv-wrap{position:absolute;top:calc(var(--site-top-h,64px) + 22px);left:0;right:0;
+  margin:0 auto;max-width:1180px;padding:0 22px;}
+.bv-sh{position:relative;overflow:hidden;border-radius:9px;background:var(--card2,#252836);}
+[data-theme="light"] .bv-sh{background:#e3e8f0;}
+.bv-sh::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);
+  animation:bvShim 1.3s infinite;}
+[data-theme="light"] .bv-sh::after{background:linear-gradient(90deg,transparent,rgba(0,0,0,.045),transparent);}
+@keyframes bvShim{to{transform:translateX(100%);}}
+.bv-t{width:200px;height:20px;margin-bottom:18px;}
+.bv-g{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+.bv-g>.bv-sh{flex:1 1 200px;height:92px;}
+.bv-card{height:216px;margin-bottom:14px;}
+.bv-l{height:12px;margin-bottom:9px;border-radius:6px;}
+.bv-l.w7{width:74%;} .bv-l.w6{width:58%;}
+@media (max-width:820px){.bv-wrap{padding:0 14px;}.bv-t{width:140px;}.bv-card{height:170px;}
+  .bv-g>.bv-sh{flex:1 1 140px;height:80px;}}
+@media (prefers-reduced-motion:reduce){#bootVeil{animation-duration:.01s;}.bv-sh::after{animation:none;}}
+</style>
 </head>
 <body data-page-node-id="X6GJ2qG42PuJ6vcYTMyuHN">
+<div id="bootVeil" aria-hidden="true"><div class="bv-wrap">
+  <div class="bv-sh bv-t"></div>
+  <div class="bv-g"><div class="bv-sh"></div><div class="bv-sh"></div><div class="bv-sh"></div></div>
+  <div class="bv-sh bv-card"></div>
+  <div class="bv-sh bv-l"></div><div class="bv-sh bv-l w7"></div><div class="bv-sh bv-l w6"></div>
+</div></div>
 <div id="siteNav" data-page-node-id="FIzUuI4sk6CsYkYrY3PDUC"></div>
 <script>window.SITE_ROOT='../';</script>
 <script src="../assets/js/site.js"></script>
@@ -136,7 +168,7 @@
 <div class="rtip" id="rowTip" data-page-node-id="iRVhuStGVUayGHYgadyDom"></div>
 <div class="trend-tip" id="topTip" data-page-node-id="nW0Q2dQs0D1BAbMRaCbmJV"></div>
 <div class="trend-tip" id="formTip" style="max-width:300px" data-page-node-id="76lROm7KHqdFDVDH7VfUCH"></div>
-<script src="../assets/js/draws-big5-data.js"></script>
-<script src="../assets/js/draws-big5.js"></script>
+<script defer src="../assets/js/draws-big5-data.js"></script>
+<script defer src="../assets/js/draws-big5.js"></script>
 </body>
 </html>

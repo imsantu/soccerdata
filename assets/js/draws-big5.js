@@ -1055,3 +1055,6 @@ render(); bindBkToggle(); bindScrollHint(); bindScrollBtns();
 
 // 滚动时收起悬停浮层，避免浮层跟着页面漂走
 window.addEventListener('scroll', ()=>{ hideRowTip(); }, {passive:true});
+
+// 真实内容已渲染完毕，通知外壳把首屏骨架淡出
+try{ if(window.QZL_BOOT_DONE) window.QZL_BOOT_DONE(); }catch(e){}

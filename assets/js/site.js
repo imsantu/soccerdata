@@ -146,6 +146,15 @@
       if (b) b.setAttribute('aria-expanded', 'false');
     }
   }
+  // 跳页前先给下拉一个「忙」态（箭头转圈），再让出一帧确保它画出来，
+  // 免得几 MB 数据脚本下载期间看起来像没响应。
+  function goPage(box, url) {
+    if (!url) return;
+    closeAll();
+    if (box) box.classList.add('busy');
+    setTimeout(function () { location.href = url; }, 60);
+  }
+
   top.addEventListener('click', function (e) {
     var t = e.target;
     while (t && t !== top) {
@@ -168,14 +177,14 @@
             if (i === groupIdx) { closeAll(); return; }
             var gp = SITE_NAV[i];
             var def = gp.items.filter(function (x) { return x.ready; })[0] || gp.items[0];
-            location.href = pageUrl(def.file);
+            goPage(box, pageUrl(def.file));
           } else if (kind === 'l') {
             var k = parseInt(t.getAttribute('data-i'), 10);
             if (t.classList.contains('wait')) return;
             var it = group.items[k];
             if (!it || !it.ready) return;
             if (it.file.toLowerCase() === cur) { closeAll(); return; }
-            location.href = pageUrl(it.file);
+            goPage(box, pageUrl(it.file));
           } else if (kind === 'w') {
             // 范围下拉：找到页面对应的 .wbtn，反向触发它的 click（页面逻辑由原按钮接管）
             var win = t.getAttribute('data-win');
@@ -210,6 +219,29 @@
     var sp = document.getElementById('siteTopSpacer');
     if (sp) sp.style.height = h + 'px';
   }
+
+  // ---------------- 首屏骨架：内容就绪后淡出 ----------------
+  // 数据脚本动辄 3~5MB 且原本是同步 <script>，会阻塞解析/渲染，
+  // 于是「深色背景已经画好、内容还没出来」＝ 切页时闪黑。
+  // 骨架是 HTML 里静态写死的（不依赖任何脚本/外链），首帧就能画出来顶住空窗。
+  var bootT0 = (window.performance && performance.now) ? performance.now() : Date.now();
+  var bootGone = false;
+  function hideBoot() {
+    if (bootGone) return;
+    bootGone = true;
+    var v = document.getElementById('bootVeil');
+    if (!v) return;
+    var now = (window.performance && performance.now) ? performance.now() : Date.now();
+    // 骨架是延迟 0.2s 才淡入的：还没露脸就直接摘掉，避免「闪一下骨架」；
+    // 已经露脸了就走淡出动画，别硬切。
+    if (now - bootT0 < 240) { if (v.parentNode) v.parentNode.removeChild(v); return; }
+    v.classList.add('out');
+    setTimeout(function () { if (v.parentNode) v.parentNode.removeChild(v); }, 320);
+  }
+  window.QZL_BOOT_DONE = hideBoot;
+  // 兜底：页面脚本万一没回调，load 后或 6s 后也会收掉，绝不会卡住不消失
+  window.addEventListener('load', function () { setTimeout(hideBoot, 150); });
+  setTimeout(hideBoot, 6000);
 
   // ---------------- 把页面的联赛 tab / 年份搬进外壳 ----------------
   function moveTo(id, host) {

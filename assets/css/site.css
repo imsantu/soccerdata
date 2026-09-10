@@ -43,6 +43,16 @@
   --sel-h-bg:rgba(0,0,0,.06);
 }
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);}
+
+/* 跨页导航平滑淡入淡出（Chrome 111+ / Safari 18.2+），消除切页硬闪。
+   不支持的浏览器整段忽略，退回原来的直接切换，无副作用。 */
+@view-transition{ navigation:auto; }
+::view-transition-old(root){ animation-duration:.20s; animation-timing-function:ease-out; }
+::view-transition-new(root){ animation-duration:.26s; animation-timing-function:ease-out; }
+/* 尊重系统「减弱动态效果」设置 */
+@media (prefers-reduced-motion:reduce){
+  ::view-transition-old(root),::view-transition-new(root){ animation-duration:.01s; }
+}
 *{box-sizing:border-box;}                 /* 兜底：首页/占位页没有页面 CSS，避免 .site-top-in 因 content-box 撑出横向滚动 */
 html body{padding-top:0;}                  /* 顶部留白交给外壳的等高占位块 */
 #mount{display:block;}
@@ -158,6 +168,16 @@ body .stickynav.site-moved{display:none !important;}
 .sel-item.on::after{content:"✓"; margin-left:auto; font-size:12px; opacity:.9;}
 .sel-item.wait{opacity:.55;cursor:not-allowed;}
 .sel-item .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#f0a92e;margin-left:2px;}
+
+/* 点了「跳页」的菜单项后立刻给反馈：箭头转圈 + 边框高亮，
+   免得在 3~5MB 数据脚本下载期间看起来像「点了没反应」。 */
+.sel.busy{pointer-events:none;}
+.sel.busy .sel-btn{border-color:var(--accent);color:var(--accent);background:var(--sel-h-bg);}
+.sel.busy .sel-btn .caret{animation:selSpin .7s linear infinite;transition:none;}
+@keyframes selSpin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion:reduce){
+  .sel.busy .sel-btn .caret{animation:none;opacity:.4;}
+}
 
 /* 范围下拉里给「近五季/近三季」加个日历小图标 */
 .sel[data-kind="w"] .sel-btn::before{
